@@ -351,24 +351,6 @@
 
 <script src="./assets/js/loader.js"></script>
 <script src="./assets/js/script.js"></script>
-<script>
-  /* Animate skill bars on scroll */
-  document.addEventListener("DOMContentLoaded", () => {
-    const bars = document.querySelectorAll(".skill-bar-fill[data-width]");
-    if (!("IntersectionObserver" in window)) {
-      bars.forEach(b => { b.style.width = b.dataset.width; });
-      return;
-    }
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.style.width = e.target.dataset.width;
-          obs.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.3 });
-    bars.forEach(b => obs.observe(b));
-  });
-</script>
+
 </body>
 </html>
