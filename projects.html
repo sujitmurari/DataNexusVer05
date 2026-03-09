@@ -217,13 +217,7 @@
           </div>
         </div>
         <div style="border-radius: 0.9rem; overflow: hidden; background: radial-gradient(circle at top left, rgba(0, 255, 255, 0.12), transparent), #020612; box-shadow: 0 0 0 1px rgba(53, 224, 255, 0.6), 0 0 30px rgba(53, 224, 255, 0.45);">
-          <iframe
-            id="dashboard-frame"
-            title="DataNexus Tableau Dashboard"
-            src=""
-            loading="lazy"
-            style="width: 100%; height: 650px; border: none; display: block; background:#020612;"
-          ></iframe>
+          <div id="dashboard-frame" style="width:100%; height:650px;"></div>
         </div>
       </div>
     </section>
@@ -265,41 +259,55 @@
 <script src="./assets/js/loader.js"></script>
 <script src="./assets/js/script.js"></script>
 <script>
-  function openDashboard(type) {
-    var frame = document.getElementById('dashboard-frame');
-    var statusEl = document.getElementById('dashboard-status');
-    var section = document.getElementById('dashboard-viewer-section');
+ function openDashboard(type) {
 
-    if (!frame || !statusEl || !section) return;
+  const container = document.getElementById("dashboard-frame");
+  const statusEl = document.getElementById("dashboard-status");
+  const section = document.getElementById("dashboard-viewer-section");
 
-    var url = '';
-    switch (type) {
-      case 'flights':
-        url = 'https://public.tableau.com/views/FlightsDashboard_17704030931600/FlightsDashboard?:embed=y';
-        break;
-      case 'ecommerce':
-        url = 'https://public.tableau.com/views/IndianE-CommercePricingRevenuePerformanceDashboard/Dashboard1?:embed=y';
-        break;
-      case 'gym':
-        url = 'https://public.tableau.com/views/GymPerformanceWorkoutEfficiencyAnalyticsDashboard/GymPerformanceWorkoutEfficiencyAnalyticsDashboard?:embed=y';
-        break;
-      case 'retail':
-        url = 'https://public.tableau.com/views/DecathlonIndia_17704793519210/DecthlonIndia?:embed=y';
-        break;
-      default:
-        return;
-    }
+  if (!container) return;
 
-    statusEl.textContent = 'Connecting to Tableau analytics server...';
+  let url = "";
 
-    frame.onload = function () {
-      statusEl.textContent = 'Dashboard loaded. Interact with filters, tooltips, and views in real time.';
-    };
+  switch (type) {
 
-    frame.src = url;
+    case "flights":
+      url = "https://public.tableau.com/views/FlightsDashboard_17704030931600/FlightsDashboard";
+      break;
 
-    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    case "ecommerce":
+      url = "https://public.tableau.com/views/IndianE-CommercePricingRevenuePerformanceDashboard/Dashboard1";
+      break;
+
+    case "gym":
+      url = "https://public.tableau.com/views/GymPerformanceWorkoutEfficiencyAnalyticsDashboard/GymPerformanceWorkoutEfficiencyAnalyticsDashboard";
+      break;
+
+    case "retail":
+      url = "https://public.tableau.com/views/DecathlonIndia_17704793519210/DecthlonIndia";
+      break;
   }
+
+  statusEl.textContent = "Connecting to Tableau analytics server...";
+
+  container.innerHTML = "";
+
+  const viz = document.createElement("tableau-viz");
+
+  viz.setAttribute("src", url);
+  viz.setAttribute("width", "100%");
+  viz.setAttribute("height", "650");
+  viz.setAttribute("toolbar", "bottom");
+
+  container.appendChild(viz);
+
+  viz.addEventListener("load", () => {
+    statusEl.textContent =
+      "Dashboard loaded. Interact with filters and charts.";
+  });
+
+  section.scrollIntoView({ behavior: "smooth" });
+}
 </script>
   <script src="https://public.tableau.com/javascripts/api/tableau.embedding.3.latest.min.js"></script>
 </body>
