@@ -258,6 +258,7 @@
 
 <script src="./assets/js/loader.js"></script>
 <script src="./assets/js/script.js"></script>
+  <script src="https://public.tableau.com/javascripts/api/tableau.embedding.3.latest.min.js"></script>
 <script>
  function openDashboard(type) {
 
@@ -292,13 +293,13 @@
 
   container.innerHTML = "";
 
-  const viz = document.createElement("tableau-viz");
+ const viz = document.createElement("tableau-viz");
 
-  viz.setAttribute("src", url);
-  viz.setAttribute("width", "100%");
-  viz.setAttribute("height", "650");
-  viz.setAttribute("toolbar", "bottom");
-
+viz.setAttribute("src", url);
+viz.setAttribute("width", "100%");
+viz.setAttribute("height", "650");
+viz.setAttribute("toolbar", "bottom");
+viz.setAttribute("hide-tabs", "");
   container.appendChild(viz);
 
   viz.addEventListener("load", () => {
@@ -309,6 +310,5 @@
   section.scrollIntoView({ behavior: "smooth" });
 }
 </script>
-  <script src="https://public.tableau.com/javascripts/api/tableau.embedding.3.latest.min.js"></script>
 </body>
 </html>
