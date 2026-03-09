@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects — DataNexus | Sujit Murari</title>
+  <link rel="icon" href="./assets/icons/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/style.css">
+  <style>
+    /* CRITICAL: Structural fallback before full CSS loads */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:#040a12;color:#e8f4fd;font-family:monospace;overflow-x:hidden}
+    #boot-screen{position:fixed;inset:0;background:#000;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column}
+    #site-wrapper{opacity:0;transition:opacity 0.8s ease;position:relative;z-index:2}
+    #site-wrapper.visible{opacity:1}
+  </style>
+</head>
+<body>
+
+<div id="site-wrapper">
+
+  <canvas id="matrix-canvas"></canvas>
+  <div class="grid-overlay"></div>
+  <div class="scan-line"></div>
+
+  <nav class="nav">
+    <a href="./index.html" class="nav-logo">
+      <span class="logo-bracket">[</span>DN<span class="logo-bracket">]</span> DATANEXUS
+    </a>
+    <ul class="nav-links">
+      <li><a href="./index.html">Home</a></li>
+      <li><a href="./skills.html">Skills</a></li>
+      <li><a href="./projects.html">Projects</a></li>
+      <li><a href="./about.html">About</a></li>
+      <li><a href="./connect.html">Connect</a></li>
+      <li><a href="./contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-status"><div class="status-dot"></div><span id="nav-clock">00:00:00</span></div>
+    <div class="nav-toggle" id="nav-toggle"><span></span><span></span><span></span></div>
+  </nav>
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="./index.html">◈ Home</a><a href="./skills.html">◈ Skills</a>
+    <a href="./projects.html">◈ Projects</a><a href="./about.html">◈ About</a>
+    <a href="./connect.html">◈ Connect</a><a href="./contact.html">◈ Contact</a>
+  </div>
+
+  <main class="page page-section">
+
+    <div style="margin-bottom: 1rem;">
+      <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--green); letter-spacing: 0.3em; margin-bottom: 0.75rem;">
+        ◈ ANALYTICS MODULE REGISTRY — 4 DEPLOYMENTS
+      </div>
+      <h1 style="font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; letter-spacing: -0.02em; background: linear-gradient(135deg, #fff 30%, var(--cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.5rem;">
+        PROJECTS
+      </h1>
+      <p style="font-family: var(--font-body); color: var(--text-secondary); max-width: 600px; font-size: 1rem; font-weight: 300;">
+        Data analytics dashboards built on real-world datasets. Each module delivers actionable business intelligence through interactive visualizations.
+      </p>
+    </div>
+
+    <div class="section-header fade-in" style="margin-bottom: 2.5rem;">
+      <div class="section-title"><span class="num">◈</span> DEPLOYED ANALYTICS MODULES</div>
+      <div class="header-line"></div>
+    </div>
+
+    <div class="projects-grid">
+
+      <!-- PROJECT 1 -->
+      <div class="glow-card bracket-card project-card fade-in stagger-1">
+        <div class="project-header">
+          <div>
+            <div class="project-id">MODULE_01 // TRANSPORT</div>
+            <div class="project-title">Indian Domestic<br>Flight Pricing Analytics</div>
+          </div>
+          <div class="tag tag-cyan" style="flex-shrink: 0;">LIVE</div>
+        </div>
+
+        <div class="project-dataset">Domestic flight booking dataset · 300K+ records</div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+          <span class="tag tag-cyan">Tableau</span>
+          <span class="tag tag-green">Python</span>
+          <span class="tag tag-green">Pandas</span>
+          <span class="tag tag-purple">Statistics</span>
+        </div>
+
+        <div class="project-insight">
+          Airlines on metro routes price tickets <strong style="color: var(--cyan);">43% higher</strong> on average. Price elasticity peaks 0–7 days before departure, with direct flights commanding a <strong style="color: var(--cyan);">2.3× premium</strong> over 2-stop routes.
+        </div>
+
+        <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim);">
+          <span style="color: var(--cyan);">Includes:</span> Price heatmap · Duration scatter · Revenue by route · Stop analysis
+        </div>
+
+        <div class="project-footer">
+          <a href="https://public.tableau.com/" target="_blank" class="btn btn-primary" style="font-size: 0.72rem; padding: 0.5rem 1rem;">▸ Tableau Dashboard</a>
+          <a href="./contact.html" class="btn btn-ghost" style="font-size: 0.72rem; padding: 0.5rem 1rem;">▸ Case Study</a>
+        </div>
+      </div>
+
+      <!-- PROJECT 2 -->
+      <div class="glow-card bracket-card project-card fade-in stagger-2">
+        <div class="project-header">
+          <div>
+            <div class="project-id">MODULE_02 // E-COMMERCE</div>
+            <div class="project-title">Flipkart E-Commerce<br>Pricing Dashboard</div>
+          </div>
+          <div class="tag tag-green" style="flex-shrink: 0;">LIVE</div>
+        </div>
+
+        <div class="project-dataset">Flipkart product catalog · 15K+ SKUs</div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+          <span class="tag tag-cyan">Tableau</span>
+          <span class="tag tag-green">Excel</span>
+          <span class="tag tag-purple">SQL</span>
+        </div>
+
+        <div class="project-insight">
+          Discount rates above <strong style="color: var(--green);">40%</strong> correlate with a <strong style="color: var(--green);">0.72 Pearson score</strong> to higher ratings. Electronics show a non-linear pricing adoption curve with sweet spots at ₹8K–₹15K.
+        </div>
+
+        <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim);">
+          <span style="color: var(--green);">Includes:</span> Discount vs ratings scatter · Category pricing heatmap · Adoption funnel
+        </div>
+
+        <div class="project-footer">
+          <a href="https://public.tableau.com/" target="_blank" class="btn btn-secondary" style="font-size: 0.72rem; padding: 0.5rem 1rem;">▸ Tableau Dashboard</a>
+          <a href="./contact.html" class="btn btn-ghost" style="font-size: 0.72rem; padding: 0.5rem 1rem;">▸ Case Study</a>
+        </div>
+      </div>
+
+      <!-- PROJECT 3 -->
+      <div class="glow-card bracket-card project-card fade-in stagger-3">
+        <div class="project-header">
+          <div>
+            <div class="project-id">MODULE_03 // FITNESS</div>
+            <div class="project-title">Gym Performance<br>Analytics Dashboard</div>
+          </div>
+          <div class="tag tag-purple" style="flex-shrink: 0;">LIVE</div>
+        </div>
+
+        <div class="project-dataset">Gym session tracker · 5K+ sessions logged</div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+          <span class="tag tag-cyan">Tableau</span>
+          <span class="tag tag-green">Python</span>
+          <span class="tag tag-purple">Statistics</span>
+        </div>
+
+        <div class="project-insight">
+          Sessions exceeding <strong style="color: #b084ff;">75 minutes</strong> show diminishing calorie burn with elevated average HR. BMI and session duration show a <strong style="color: #b084ff;">−0.48 correlation</strong> over 90-day moving average periods.
+        </div>
+
+        <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim);">
+          <span style="color: #b084ff;">Includes:</span> Heart rate boxplot · BMI scatter · Calorie trend · Moving avg
+        </div>
+
+        <div class="project-footer">
+          <a href="https://public.tableau.com/" target="_blank" class="btn btn-ghost" style="font-size: 0.72rem; padding: 0.5rem 1rem; border-color: #7b2fff; color: #b084ff;">▸ Tableau Dashboard</a>
+          <a href="./contact.html" class="btn btn-ghost" style="font-size: 0.72rem; padding: 0.5rem 1rem;">▸ Case Study</a>
+        </div>
+      </div>
+
+      <!-- PROJECT 4 -->
+      <div class="glow-card bracket-card project-card fade-in stagger-4">
+        <div class="project-header">
+          <div>
+            <div class="project-id">MODULE_04 // RETAIL</div>
+            <div class="project-title">Retail Sales<br>Intelligence Dashboard</div>
+          </div>
+          <div class="tag tag-cyan" style="flex-shrink: 0; background: rgba(255,107,53,0.1); border-color: rgba(255,107,53,0.4); color: var(--orange);">LIVE</div>
+        </div>
+
+        <div class="project-dataset">Superstore retail dataset · Regional & category</div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+          <span class="tag tag-cyan">Tableau</span>
+          <span class="tag tag-green">Excel</span>
+          <span class="tag tag-purple">SQL</span>
+        </div>
+
+        <div class="project-insight">
+          The <strong style="color: var(--orange);">West region</strong> leads revenue by 28% but shows the highest return rate. Office Supplies drive volume while Technology delivers the highest profit margin at <strong style="color: var(--orange);">15.8%</strong>.
+        </div>
+
+        <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim);">
+          <span style="color: var(--orange);">Includes:</span> Revenue by region map · Category profitability · Time series · KPIs
+        </div>
+
+        <div class="project-footer">
+          <a href="https://public.tableau.com/" target="_blank" class="btn btn-ghost" style="font-size: 0.72rem; padding: 0.5rem 1rem; border-color: var(--orange); color: var(--orange);">▸ Tableau Dashboard</a>
+          <a href="./contact.html" class="btn btn-ghost" style="font-size: 0.72rem; padding: 0.5rem 1rem;">▸ Case Study</a>
+        </div>
+      </div>
+
+    </div><!-- end projects-grid -->
+
+    <!-- Stats row -->
+    <div class="section-header fade-in" style="margin-top: 4rem; margin-bottom: 2rem;">
+      <div class="section-title"><span class="num">◈</span> AGGREGATE PROJECT METRICS</div>
+      <div class="header-line"></div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem;">
+      <div class="glow-card fade-in" style="padding: 1.25rem; text-align: center;">
+        <div style="font-family: var(--font-display); font-size: 2rem; font-weight: 900; color: var(--cyan);">4</div>
+        <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-dim); letter-spacing: 0.1em;">DASHBOARDS</div>
+      </div>
+      <div class="glow-card fade-in stagger-1" style="padding: 1.25rem; text-align: center;">
+        <div style="font-family: var(--font-display); font-size: 2rem; font-weight: 900; color: var(--green);">320K+</div>
+        <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-dim); letter-spacing: 0.1em;">RECORDS ANALYZED</div>
+      </div>
+      <div class="glow-card fade-in stagger-2" style="padding: 1.25rem; text-align: center;">
+        <div style="font-family: var(--font-display); font-size: 2rem; font-weight: 900; color: #b084ff;">5</div>
+        <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-dim); letter-spacing: 0.1em;">TOOLS USED</div>
+      </div>
+      <div class="glow-card fade-in stagger-3" style="padding: 1.25rem; text-align: center;">
+        <div style="font-family: var(--font-display); font-size: 2rem; font-weight: 900; color: var(--orange);">100%</div>
+        <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-dim); letter-spacing: 0.1em;">LIVE ON TABLEAU</div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-left"><span>[DN]</span> DATANEXUS v2.0 — <span>SUJIT MURARI</span></div>
+    <div class="footer-right">DEV BHOOMI UTTARAKHAND UNIVERSITY · SEM IV · 2025</div>
+  </footer>
+
+</div>
+
+<script src="./assets/js/loader.js"></script>
+<script src="./assets/js/script.js"></script>
+</body>
+</html>
