@@ -216,8 +216,21 @@
             Select a module's Case Study to load its dashboard.
           </div>
         </div>
-        <div style="border-radius: 0.9rem; overflow: hidden; background: radial-gradient(circle at top left, rgba(0, 255, 255, 0.12), transparent), #020612; box-shadow: 0 0 0 1px rgba(53, 224, 255, 0.6), 0 0 30px rgba(53, 224, 255, 0.45);">
-          <div id="dashboard-frame" style="width:100%; height:650px;"></div>
+        <div style="border-radius: 0.9rem; overflow: hidden; background: radial-gradient(circle at top left, rgba(0, 255, 255, 0.12), transparent), #020612; box-shadow: 0 0 0 1px rgba(53, 224, 255, 0.6), 0 0 30px rgba(53, 224, 255, 0.45); position: relative;">
+          <div id="dashboard-loading">
+            <div class="spinner"></div>
+            <span>LOADING DASHBOARD...</span>
+          </div>
+          <div id="dashboard-placeholder">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="28" width="8" height="16" rx="1" fill="currentColor"/>
+              <rect x="16" y="18" width="8" height="26" rx="1" fill="currentColor"/>
+              <rect x="28" y="10" width="8" height="34" rx="1" fill="currentColor"/>
+              <rect x="40" y="22" width="4" height="22" rx="1" fill="currentColor"/>
+            </svg>
+            <span>SELECT A MODULE'S CASE STUDY TO LOAD ITS DASHBOARD</span>
+          </div>
+          <div id="dashboard-frame" style="width:100%;"></div>
         </div>
       </div>
     </section>
@@ -258,56 +271,103 @@
 
 <script src="./assets/js/loader.js"></script>
 <script src="./assets/js/script.js"></script>
-  <script src="https://public.tableau.com/javascripts/api/tableau.embedding.3.latest.min.js"></script>
+<style>
+  #dashboard-frame iframe {
+    display: block;
+    width: 100%;
+    height: 650px;
+    border: none;
+  }
+  #dashboard-loading {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    height: 650px;
+    flex-direction: column;
+    gap: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+  }
+  #dashboard-loading.active { display: flex; }
+  #dashboard-loading .spinner {
+    width: 36px; height: 36px;
+    border: 2px solid rgba(53,224,255,0.15);
+    border-top-color: var(--cyan);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #dashboard-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 650px;
+    flex-direction: column;
+    gap: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+  }
+  #dashboard-placeholder svg { opacity: 0.3; }
+</style>
 <script>
 function openDashboard(type) {
-
-  const container = document.getElementById("dashboard-frame");
-  const statusEl = document.getElementById("dashboard-status");
-  const section = document.getElementById("dashboard-viewer-section");
+  const container  = document.getElementById("dashboard-frame");
+  const statusEl   = document.getElementById("dashboard-status");
+  const section    = document.getElementById("dashboard-viewer-section");
+  const loading    = document.getElementById("dashboard-loading");
+  const placeholder = document.getElementById("dashboard-placeholder");
 
   if (!container) return;
 
-  let url = "";
+  // Tableau Public embed URLs  (?:embed=yes strips the chrome)
+  const urls = {
+    flights:   "https://public.tableau.com/views/FlightsDashboard_17704030931600/FlightsDashboard?:embed=yes&:showVizHome=no&:tabs=no&:toolbar=bottom",
+    ecommerce: "https://public.tableau.com/views/IndianE-CommercePricingRevenuePerformanceDashboard/Dashboard1?:embed=yes&:showVizHome=no&:tabs=no&:toolbar=bottom",
+    gym:       "https://public.tableau.com/views/GymPerformanceWorkoutEfficiencyAnalyticsDashboard/GymPerformanceWorkoutEfficiencyAnalyticsDashboard?:embed=yes&:showVizHome=no&:tabs=no&:toolbar=bottom",
+    retail:    "https://public.tableau.com/views/DecathlonIndia_17704793519210/DecthlonIndia?:embed=yes&:showVizHome=no&:tabs=no&:toolbar=bottom"
+  };
 
-  switch (type) {
+  const labels = {
+    flights:   "MODULE_01 // FLIGHT PRICING ANALYTICS",
+    ecommerce: "MODULE_02 // FLIPKART E-COMMERCE DASHBOARD",
+    gym:       "MODULE_03 // GYM PERFORMANCE ANALYTICS",
+    retail:    "MODULE_04 // RETAIL SALES INTELLIGENCE"
+  };
 
-    case "flights":
-      url = "https://public.tableau.com/views/FlightsDashboard_17704030931600/FlightsDashboard";
-      break;
+  const url = urls[type];
+  if (!url) return;
 
-    case "ecommerce":
-      url = "https://public.tableau.com/views/IndianE-CommercePricingRevenuePerformanceDashboard/Dashboard1";
-      break;
-
-    case "gym":
-      url = "https://public.tableau.com/views/GymPerformanceWorkoutEfficiencyAnalyticsDashboard/GymPerformanceWorkoutEfficiencyAnalyticsDashboard";
-      break;
-
-    case "retail":
-      url = "https://public.tableau.com/views/DecathlonIndia_17704793519210/DecthlonIndia";
-      break;
-  }
-
-  statusEl.textContent = "Connecting to Tableau analytics server...";
-
+  // Show loading state
+  if (placeholder) placeholder.style.display = "none";
   container.innerHTML = "";
+  if (loading) { loading.style.display = "flex"; loading.classList.add("active"); }
+  statusEl.textContent = "◈ CONNECTING — " + labels[type];
 
- const viz = document.createElement("tableau-viz");
+  // Build iframe
+  const iframe = document.createElement("iframe");
+  iframe.src = url;
+  iframe.setAttribute("allowfullscreen", "true");
+  iframe.setAttribute("title", labels[type]);
 
-viz.setAttribute("src", url);
-viz.setAttribute("width", "100%");
-viz.setAttribute("height", "650");
-viz.setAttribute("toolbar", "bottom");
-viz.setAttribute("hide-tabs", "");
-  container.appendChild(viz);
+  iframe.onload = () => {
+    if (loading) { loading.style.display = "none"; loading.classList.remove("active"); }
+    statusEl.innerHTML = '<span style="color:var(--green);">◈ LIVE</span> — ' + labels[type] + ' — Interact with filters &amp; charts below.';
+  };
 
-  viz.addEventListener("load", () => {
-    statusEl.textContent =
-      "Dashboard loaded. Interact with filters and charts.";
-  });
+  iframe.onerror = () => {
+    if (loading) { loading.style.display = "none"; loading.classList.remove("active"); }
+    statusEl.innerHTML = '<span style="color:var(--orange);">⚠ Could not load dashboard.</span> Try opening it directly on Tableau Public.';
+  };
 
-  section.scrollIntoView({ behavior: "smooth" });
+  // Insert loading spinner first, then swap in iframe on load
+  container.appendChild(iframe);
+
+  section.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 </script>
 </body>
