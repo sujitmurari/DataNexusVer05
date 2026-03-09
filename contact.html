@@ -10,12 +10,234 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./assets/css/style.css">
   <style>
-    /* CRITICAL: Structural fallback before full CSS loads */
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{background:#040a12;color:#e8f4fd;font-family:monospace;overflow-x:hidden}
     #boot-screen{position:fixed;inset:0;background:#000;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column}
     #site-wrapper{opacity:0;transition:opacity 0.8s ease;position:relative;z-index:2}
     #site-wrapper.visible{opacity:1}
+
+    /* ── Page header ── */
+    .page-eyebrow { font-family:'Share Tech Mono',monospace; font-size:0.7rem; color:var(--green); letter-spacing:0.3em; margin-bottom:0.75rem; }
+    .page-heading { font-family:var(--font-display); font-size:clamp(2rem,5vw,3.5rem); font-weight:900; letter-spacing:-0.02em; background:linear-gradient(135deg,#fff 30%,var(--cyan) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:0.5rem; }
+    .page-sub { font-family:var(--font-body); color:var(--text-secondary); font-size:1rem; font-weight:300; max-width:540px; }
+
+    /* ── Section divider ── */
+    .dn-divider { display:flex; align-items:center; gap:1rem; margin:2rem 0 1.5rem; }
+    .dn-divider-label { font-family:'Share Tech Mono',monospace; font-size:0.7rem; letter-spacing:0.28em; color:var(--cyan); white-space:nowrap; }
+    .dn-divider-line { flex:1; height:1px; background:linear-gradient(90deg,rgba(53,224,255,0.35),transparent); }
+
+    /* ── Contact layout ── */
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    @media (min-width: 860px) {
+      .contact-layout { grid-template-columns: 1fr 380px; }
+    }
+
+    /* ── Form card ── */
+    .form-card { padding: 1.75rem; }
+    .form-card-title {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 0.25rem;
+    }
+    .form-card-desc {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Form fields ── */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 560px) { .form-row { grid-template-columns: 1fr; } }
+
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+    .form-group:last-of-type { margin-bottom: 0; }
+
+    .form-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .form-label .req { color: var(--cyan); margin-left: 0.2rem; }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--text-primary);
+      background: rgba(4,10,25,0.8);
+      border: 1px solid rgba(53,224,255,0.18);
+      border-radius: 0.5rem;
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: border-color 0.18s, box-shadow 0.18s;
+      width: 100%;
+    }
+    .form-input::placeholder,
+    .form-textarea::placeholder { color: rgba(140,163,194,0.4); }
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: rgba(53,224,255,0.55);
+      box-shadow: 0 0 0 3px rgba(53,224,255,0.07);
+    }
+    .form-select { cursor: pointer; }
+    .form-select option { background: #040a12; }
+    .form-textarea { min-height: 130px; resize: vertical; line-height: 1.6; }
+
+    /* ── Submit button ── */
+    .form-submit-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1.25rem;
+    }
+    .form-submit-btn {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      padding: 0.7rem 2rem;
+      border-radius: 999px;
+      border: 1px solid var(--cyan);
+      background: linear-gradient(135deg, rgba(53,224,255,0.22), rgba(53,224,255,0.06));
+      color: #e8f4fd;
+      cursor: pointer;
+      transition: box-shadow 0.18s, transform 0.12s;
+      box-shadow: 0 0 16px rgba(53,224,255,0.15);
+    }
+    .form-submit-btn:hover { box-shadow: 0 0 30px rgba(53,224,255,0.5); transform: translateY(-1px); }
+    .form-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .form-submit-note {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── Success / error state ── */
+    /* script.js sets className = 'form-status' / 'form-status success' / 'form-status error' */
+    .form-msg,
+    .form-status {
+      display: none;
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      line-height: 1.5;
+    }
+    /* shown when script.js sets any class */
+    .form-status:not(:empty)        { display: block; border: 1px solid rgba(53,224,255,0.2); color: var(--text-secondary); background: rgba(53,224,255,0.04); }
+    .form-msg.success,
+    .form-status.success { display: block; background: rgba(59,255,184,0.07); border: 1px solid rgba(59,255,184,0.3); color: #3bffb8; }
+    .form-msg.error,
+    .form-status.error   { display: block; background: rgba(255,107,53,0.07); border: 1px solid rgba(255,107,53,0.3); color: #ff9f40; }
+
+    /* ── Sidebar info ── */
+    .contact-sidebar { display: flex; flex-direction: column; gap: 1.25rem; }
+
+    .info-card { padding: 1.5rem; }
+    .info-card-title {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid rgba(53,224,255,0.12);
+    }
+
+    .info-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      margin-bottom: 0.9rem;
+    }
+    .info-row:last-child { margin-bottom: 0; }
+    .info-row-icon {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 1px solid rgba(53,224,255,0.2);
+      background: rgba(53,224,255,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--cyan);
+    }
+    .info-row-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--text-dim);
+      letter-spacing: 0.14em;
+      margin-bottom: 0.2rem;
+    }
+    .info-row-value {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--text-primary);
+    }
+
+    /* ── Quick links ── */
+    .quick-links { display: flex; flex-direction: column; gap: 0.6rem; }
+    .quick-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 0.85rem;
+      border-radius: 0.5rem;
+      border: 1px solid rgba(53,224,255,0.12);
+      background: rgba(53,224,255,0.03);
+      text-decoration: none;
+      transition: border-color 0.18s, background 0.18s;
+    }
+    .quick-link:hover { border-color: rgba(53,224,255,0.35); background: rgba(53,224,255,0.06); }
+    .quick-link-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.1em;
+    }
+    .quick-link-arrow { color: var(--cyan); font-size: 0.8rem; }
+
+    /* ── Status blip ── */
+    .status-blip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--green);
+      letter-spacing: 0.12em;
+    }
+    .status-blip-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse-g 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse-g { 0%,100%{opacity:1;box-shadow:0 0 4px var(--green)} 50%{opacity:0.4;box-shadow:none} }
   </style>
 </head>
 <body>
@@ -26,9 +248,7 @@
   <div class="scan-line"></div>
 
   <nav class="nav">
-    <a href="./index.html" class="nav-logo">
-      <span class="logo-bracket">[</span>DN<span class="logo-bracket">]</span> DATANEXUS
-    </a>
+    <a href="./index.html" class="nav-logo"><span class="logo-bracket">[</span>DN<span class="logo-bracket">]</span> DATANEXUS</a>
     <ul class="nav-links">
       <li><a href="./index.html">Home</a></li>
       <li><a href="./skills.html">Skills</a></li>
@@ -49,164 +269,175 @@
 
   <main class="page page-section">
 
-    <div style="margin-bottom: 2rem;">
-      <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--green); letter-spacing: 0.3em; margin-bottom: 0.75rem;">
-        ◈ SECURE TRANSMISSION CHANNEL — ENCRYPTED
-      </div>
-      <h1 style="font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; letter-spacing: -0.02em; background: linear-gradient(135deg, #fff 30%, var(--cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.5rem;">
-        CONTACT
-      </h1>
-      <p style="font-family: var(--font-body); color: var(--text-secondary); max-width: 480px; font-size: 1rem; font-weight: 300;">
-        Open a direct channel. Whether it's an internship offer, collaboration, or just a data conversation.
-      </p>
+    <!-- Page Header -->
+    <div style="margin-bottom:2rem;">
+      <div class="page-eyebrow">◈ DIRECT COMMUNICATION CHANNEL</div>
+      <h1 class="page-heading">CONTACT</h1>
+      <p class="page-sub">Send a message directly. Whether it's a collaboration, internship opportunity, or project inquiry — all signals received.</p>
+    </div>
+
+    <div class="dn-divider fade-in">
+      <span class="dn-divider-label">◈ TRANSMISSION TERMINAL</span>
+      <div class="dn-divider-line"></div>
     </div>
 
     <div class="contact-layout">
 
-      <!-- Left: Info Cards -->
-      <div class="contact-info">
+      <!-- ── Left: Contact Form ── -->
+      <div class="glow-card form-card fade-in">
+        <div class="form-card-title">Send a Message</div>
+        <div class="form-card-desc">Fill in the fields below and your message will be routed directly.</div>
 
-        <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--cyan); letter-spacing: 0.15em; margin-bottom: 0.5rem;">
-          $ ssh hire@sujit-murari.nexus
-        </div>
+        <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" novalidate>
 
-        <div class="glow-card contact-info-card fade-in stagger-1">
-          <div class="contact-info-label">CHANNEL</div>
-          <div class="contact-info-value">Direct Email</div>
-          <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">sujitmurari@email.com</div>
-        </div>
-
-        <div class="glow-card contact-info-card fade-in stagger-2">
-          <div class="contact-info-label">LOCATION</div>
-          <div class="contact-info-value">Uttarakhand, India</div>
-          <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">UTC +5:30 IST</div>
-        </div>
-
-        <div class="glow-card contact-info-card fade-in stagger-3">
-          <div class="contact-info-label">RESPONSE TIME</div>
-          <div class="contact-info-value" style="color: var(--green);">Within 24 Hours</div>
-          <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">Mon–Sat · 9AM–9PM IST</div>
-        </div>
-
-        <div class="glow-card contact-info-card fade-in stagger-4">
-          <div class="contact-info-label">LOOKING FOR</div>
-          <div class="contact-info-value" style="color: var(--orange);">Analytics Internship</div>
-          <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">Data Analyst · BI Analyst · Tableau Developer</div>
-        </div>
-
-        <!-- Status block -->
-        <div class="glow-card fade-in stagger-5" style="padding: 1.25rem; background: rgba(0,255,136,0.03); border-color: rgba(0,255,136,0.2);">
-          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
-            <div class="status-dot"></div>
-            <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--green); letter-spacing: 0.1em;">SYSTEM ONLINE</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="contactName">Name <span class="req">*</span></label>
+              <input class="form-input" type="text" id="contactName" name="name" placeholder="Your full name" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="contactEmail">Email <span class="req">*</span></label>
+              <input class="form-input" type="email" id="contactEmail" name="email" placeholder="you@company.com" required>
+            </div>
           </div>
-          <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim);">
-            All channels operational. Messages are encrypted and delivered in real time.
-          </div>
-        </div>
 
+          <div class="form-group">
+            <label class="form-label" for="contactSubject">Subject <span class="req">*</span></label>
+            <select class="form-select" id="contactSubject" name="subject" required>
+              <option value="" disabled selected>Select a subject...</option>
+              <option value="internship">Internship Opportunity</option>
+              <option value="collaboration">Project Collaboration</option>
+              <option value="freelance">Freelance Analytics Work</option>
+              <option value="feedback">Portfolio Feedback</option>
+              <option value="other">Other Inquiry</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="contactOrg">Organization / Institution</label>
+            <input class="form-input" type="text" id="contactOrg" name="organization" placeholder="Company or university (optional)">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="contactMessage">Message <span class="req">*</span></label>
+            <textarea class="form-textarea" id="contactMessage" name="message" placeholder="Describe your inquiry, opportunity, or feedback..." required></textarea>
+          </div>
+
+          <div class="form-submit-row">
+            <button type="submit" class="form-submit-btn">▸ Transmit Message</button>
+            <span class="form-submit-note">Response within 24 hrs · IST timezone</span>
+          </div>
+
+          <div class="form-msg" id="form-status"></div>
+
+        </form>
       </div>
 
-      <!-- Right: Terminal Form -->
-      <div class="terminal-form glow-card fade-in stagger-1">
-        <div class="terminal-titlebar">
-          <div class="t-dot red"></div>
-          <div class="t-dot yellow"></div>
-          <div class="t-dot green"></div>
-          <div class="terminal-title">secure-channel@datanexus:~$ connect --hire sujit</div>
-        </div>
+      <!-- ── Right: Sidebar Info ── -->
+      <div class="contact-sidebar fade-in stagger-1">
 
-        <div class="form-terminal-body">
+        <!-- Availability -->
+        <div class="glow-card info-card">
+          <div class="info-card-title">◈ Contact Info</div>
 
-          <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--green); margin-bottom: 1.5rem; line-height: 1.8;">
-            <div>> Initializing secure channel...</div>
-            <div>> Encryption: AES-256 ✓</div>
-            <div>> Connection established ✓</div>
-            <div>> Ready to transmit</div>
+          <div class="info-row">
+            <div class="info-row-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+            </div>
+            <div>
+              <div class="info-row-label">Email</div>
+              <div class="info-row-value">sujitmurari@email.com</div>
+            </div>
           </div>
 
-          <!-- NOTE: Replace YOUR_FORM_ID with actual Formspree ID -->
-          <form id="contact-form" action="https://formspree.io/f/xreybnby" method="POST" novalidate>
-
-            <div class="form-line">
-              <span class="form-prompt">root@nexus:~$</span>
-              <span class="form-label">name:</span>
-              <input
-                type="text"
-                name="name"
-                id="field-name"
-                class="form-input"
-                placeholder="Your name..."
-                autocomplete="off"
-                required
-              >
+          <div class="info-row">
+            <div class="info-row-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
             </div>
-
-            <div class="form-line">
-              <span class="form-prompt">root@nexus:~$</span>
-              <span class="form-label">email:</span>
-              <input
-                type="email"
-                name="email"
-                id="field-email"
-                class="form-input"
-                placeholder="your@email.com"
-                autocomplete="off"
-                required
-              >
+            <div>
+              <div class="info-row-label">Response Time</div>
+              <div class="info-row-value">Within 24 hours</div>
             </div>
+          </div>
 
-            <div class="form-line">
-              <span class="form-prompt">root@nexus:~$</span>
-              <span class="form-label">subject:</span>
-              <input
-                type="text"
-                name="subject"
-                id="field-subject"
-                class="form-input"
-                placeholder="Internship inquiry / Collaboration / Other..."
-                autocomplete="off"
-              >
+          <div class="info-row">
+            <div class="info-row-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
             </div>
+            <div>
+              <div class="info-row-label">Location</div>
+              <div class="info-row-value">Uttarakhand, India · IST (UTC+5:30)</div>
+            </div>
+          </div>
 
-            <div style="margin-bottom: 1.25rem;">
-              <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
-                <span class="form-prompt">root@nexus:~$</span>
-                <span class="form-label">message:</span>
+          <div class="info-row">
+            <div class="info-row-icon" style="border-color:rgba(59,255,184,0.25);background:rgba(59,255,184,0.05);color:var(--green);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+            <div>
+              <div class="info-row-label">Status</div>
+              <div class="info-row-value">
+                <span class="status-blip"><span class="status-blip-dot"></span>Available for opportunities</span>
               </div>
-              <textarea
-                name="message"
-                id="field-message"
-                class="form-input"
-                placeholder="Type your message here..."
-                required
-              ></textarea>
-            </div>
-
-            <!-- Honeypot -->
-            <input type="text" name="_gotcha" style="display:none">
-            <input type="hidden" name="_subject" value="New message from DataNexus Portfolio">
-
-            <div class="form-submit-line">
-              <button type="submit" class="btn btn-primary">
-                <span>▸</span> TRANSMIT MESSAGE
-              </button>
-              <span id="form-status" class="form-status">Awaiting input...</span>
-            </div>
-
-          </form>
-
-          <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border);">
-            <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim); line-height: 1.8;">
-              <span style="color: var(--cyan);"># Alternatively:</span><br>
-              Email directly: <span style="color: var(--cyan);">sujitmurari@email.com</span><br>
-              LinkedIn: <span style="color: var(--cyan);">https://www.linkedin.com/in/sujitmurari06/</span>
             </div>
           </div>
-
         </div>
-      </div>
 
+        <!-- Quick links -->
+        <div class="glow-card info-card">
+          <div class="info-card-title">◈ Quick Links</div>
+          <div class="quick-links">
+            <a href="https://www.linkedin.com/in/sujitmurari06/" target="_blank" class="quick-link">
+              <span class="quick-link-label">◈ LinkedIn Profile</span>
+              <span class="quick-link-arrow">↗</span>
+            </a>
+            <a href="https://public.tableau.com/app/profile/sujit.murari" target="_blank" class="quick-link">
+              <span class="quick-link-label">◈ Tableau Portfolio</span>
+              <span class="quick-link-arrow">↗</span>
+            </a>
+            <a href="https://github.com/sujit-murari" target="_blank" class="quick-link">
+              <span class="quick-link-label">◈ GitHub Repositories</span>
+              <span class="quick-link-arrow">↗</span>
+            </a>
+            <a href="./projects.html" class="quick-link">
+              <span class="quick-link-label">◈ View Projects</span>
+              <span class="quick-link-arrow">→</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- What I'm looking for -->
+        <div class="glow-card info-card">
+          <div class="info-card-title">◈ Open To</div>
+          <div style="display:flex;flex-direction:column;gap:0.5rem;">
+            <div style="display:flex;align-items:center;gap:0.6rem;font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:var(--text-secondary);">
+              <span style="color:var(--cyan);">▸</span> Analytics internships
+            </div>
+            <div style="display:flex;align-items:center;gap:0.6rem;font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:var(--text-secondary);">
+              <span style="color:var(--green);">▸</span> Tableau / BI freelance projects
+            </div>
+            <div style="display:flex;align-items:center;gap:0.6rem;font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:var(--text-secondary);">
+              <span style="color:#b084ff;">▸</span> Data analysis collaborations
+            </div>
+            <div style="display:flex;align-items:center;gap:0.6rem;font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:var(--text-secondary);">
+              <span style="color:var(--orange);">▸</span> Portfolio / project feedback
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end sidebar -->
     </div><!-- end contact-layout -->
 
   </main>
@@ -215,10 +446,10 @@
     <div class="footer-left"><span>[DN]</span> DATANEXUS v2.0 — <span>SUJIT MURARI</span></div>
     <div class="footer-right">DEV BHOOMI UTTARAKHAND UNIVERSITY · SEM IV · 2025</div>
   </footer>
-
 </div>
 
 <script src="./assets/js/loader.js"></script>
 <script src="./assets/js/script.js"></script>
+
 </body>
 </html>
