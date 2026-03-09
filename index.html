@@ -1,56 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DataNexus — Sujit Murari | Business Analytics Portfolio</title>
-  <meta name="description" content="Sujit Murari — Business Analytics Student. Data Visualization, Tableau, SQL, Python Analytics Dashboard.">
-  <link rel="icon" href="./assets/icons/favicon.ico">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/css/style.css">
-  <style>
-    /* CRITICAL: Structural fallback before full CSS loads */
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    body{background:#040a12;color:#e8f4fd;font-family:monospace;overflow-x:hidden}
-    #boot-screen{position:fixed;inset:0;background:#000;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column}
-    #site-wrapper{opacity:0;transition:opacity 0.8s ease;position:relative;z-index:2}
-    #site-wrapper.visible{opacity:1}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataNexus — Sujit Murari | Business Analytics Portfolio</title>
+<meta name="description" content="Sujit Murari — Business Analytics Student. Tableau, SQL, Python, Excel dashboards.">
+<link rel="icon" href="./assets/icons/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="./assets/css/style.css">
 </head>
 <body>
 
-<!-- ═══ BOOT SCREEN ═══ -->
-<div id="boot-screen">
-  <div class="boot-container">
+<!-- ░░ BOOT SCREEN — removed by JS; page is always visible underneath ░░ -->
+<div id="boot">
+  <div class="boot-wrap">
     <div class="boot-logo">DATA:NEXUS</div>
     <div class="boot-sub">ANALYTICS INTELLIGENCE PLATFORM v2.0</div>
-    <div class="boot-terminal" id="boot-terminal"></div>
-    <div class="boot-progress-wrap">
-      <div class="boot-progress-label">
+    <div class="boot-box" id="boot-box"></div>
+    <div class="boot-bar-wrap">
+      <div class="boot-bar-labels">
         <span>LOADING SYSTEM</span>
-        <span id="boot-progress-pct">0%</span>
+        <span id="boot-pct">0%</span>
       </div>
-      <div class="boot-progress-bar">
-        <div class="boot-progress-fill" id="boot-progress-fill"></div>
+      <div class="boot-bar-track">
+        <div class="boot-bar-fill" id="boot-fill"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══ SITE WRAPPER ═══ -->
-<div id="site-wrapper">
+<!-- ░░ BACKGROUND EFFECTS ░░ -->
+<canvas id="matrix"></canvas>
+<div class="grid-bg"></div>
+<div class="scan"></div>
 
-  <canvas id="matrix-canvas"></canvas>
-  <div class="grid-overlay"></div>
-  <div class="scan-line"></div>
+<!-- ░░ PAGE — visible by default ░░ -->
+<div id="page">
 
-  <!-- ═══ NAVIGATION ═══ -->
+  <!-- NAV -->
   <nav class="nav">
     <a href="./index.html" class="nav-logo">
-      <span class="logo-bracket">[</span>DN<span class="logo-bracket">]</span>
-      DATANEXUS
+      <em>[</em>DN<em>]</em>&nbsp;DATANEXUS
     </a>
     <ul class="nav-links">
       <li><a href="./index.html">Home</a></li>
@@ -60,17 +52,13 @@
       <li><a href="./connect.html">Connect</a></li>
       <li><a href="./contact.html">Contact</a></li>
     </ul>
-    <div class="nav-status">
-      <div class="status-dot"></div>
-      <span id="nav-clock">00:00:00</span>
+    <div class="nav-right">
+      <div class="dot"></div>
+      <span id="clock">00:00:00</span>
     </div>
-    <div class="nav-toggle" id="nav-toggle">
-      <span></span><span></span><span></span>
-    </div>
+    <div class="nav-ham" id="nav-ham"><span></span><span></span><span></span></div>
   </nav>
-
-  <!-- Mobile Nav -->
-  <div class="nav-mobile" id="nav-mobile">
+  <div class="nav-mob" id="nav-mob">
     <a href="./index.html">◈ Home</a>
     <a href="./skills.html">◈ Skills</a>
     <a href="./projects.html">◈ Projects</a>
@@ -79,142 +67,117 @@
     <a href="./contact.html">◈ Contact</a>
   </div>
 
-  <!-- ═══ HERO ═══ -->
-  <section class="hero page">
+  <!-- HERO -->
+  <section class="hero page-wrap">
 
-    <div class="radar-bg">
-      <div class="radar-ring"></div>
-      <div class="radar-ring"></div>
-      <div class="radar-ring"></div>
-      <div class="radar-ring"></div>
+    <div class="radar">
+      <div class="r-ring"></div>
+      <div class="r-ring"></div>
+      <div class="r-ring"></div>
+      <div class="r-ring"></div>
     </div>
 
-    <!-- Floating data stream -->
-    <div class="hero-data-stream">
-      <div class="stream-row" style="--delay:0s"><span class="stream-key">DATA.IN</span><span class="stream-val">247.3 GB</span></div>
-      <div class="stream-row" style="--delay:0.4s"><span class="stream-key">QUERIES</span><span class="stream-val">1,842</span></div>
-      <div class="stream-row" style="--delay:0.8s"><span class="stream-key">ACCURACY</span><span class="stream-val">97.4%</span></div>
-      <div class="stream-row" style="--delay:1.2s"><span class="stream-key">LATENCY</span><span class="stream-val">12ms</span></div>
-      <div class="stream-row" style="--delay:1.6s"><span class="stream-key">NODES</span><span class="stream-val">16</span></div>
-      <div class="stream-row" style="--delay:2.0s"><span class="stream-key">UPTIME</span><span class="stream-val">99.98%</span></div>
-      <div class="stream-row" style="--delay:2.4s"><span class="stream-key">MODELS</span><span class="stream-val">4 ACTIVE</span></div>
-      <div class="stream-row" style="--delay:2.8s"><span class="stream-key">ALERTS</span><span class="stream-val">NONE</span></div>
-    </div>
-
-    <div class="hero-eyebrow">ANALYST PROFILE LOADED</div>
-
-    <h1 class="hero-name glitch" data-glitch="SUJIT MURARI">SUJIT MURARI</h1>
+    <div class="hero-eye">ANALYST PROFILE LOADED</div>
+    <h1 class="hero-name">SUJIT MURARI</h1>
     <div class="hero-role">BUSINESS ANALYTICS STUDENT</div>
-
-    <p class="hero-tagline">
+    <p class="hero-tag">
       Transforming business data into <span>strategic insights</span>.<br>
-      Building intelligence dashboards that drive decisions.
+      Building intelligence dashboards that drive real decisions.
     </p>
-
     <div class="hero-tools">
-      <span class="tool-badge">◈ Tableau</span>
-      <span class="tool-badge">◈ Excel</span>
-      <span class="tool-badge">◈ SQL</span>
-      <span class="tool-badge">◈ Python</span>
-      <span class="tool-badge">◈ Pandas</span>
-      <span class="tool-badge">◈ Power BI</span>
-      <span class="tool-badge">◈ Statistics</span>
+      <span class="tool">◈ Tableau</span>
+      <span class="tool">◈ Excel</span>
+      <span class="tool">◈ SQL</span>
+      <span class="tool">◈ Python</span>
+      <span class="tool">◈ Pandas</span>
+      <span class="tool">◈ Power BI</span>
+      <span class="tool">◈ Statistics</span>
     </div>
-
     <div class="hero-cta">
-      <a href="./projects.html" class="btn btn-primary">▸ View Projects</a>
-      <a href="./skills.html" class="btn btn-secondary">▸ View Skills</a>
-      <a href="./contact.html" class="btn btn-ghost">▸ Contact</a>
+      <a href="./projects.html" class="btn btn-c">&#9658; View Projects</a>
+      <a href="./skills.html"   class="btn btn-g">&#9658; View Skills</a>
+      <a href="./contact.html"  class="btn btn-ghost">&#9658; Contact</a>
     </div>
-
-    <!-- Ticker -->
-    <div style="margin-top: 3rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim); display: flex; align-items: center; gap: 0.75rem;">
-      <span style="color: var(--green);">SYS://</span>
-      <span id="terminal-ticker">> DATANEXUS ONLINE</span>
+    <div class="hero-ticker">
+      <em>SYS://</em>
+      <span id="ticker">&gt; DATANEXUS ONLINE</span>
     </div>
   </section>
 
-  <!-- ═══ KPI DASHBOARD ═══ -->
-  <section class="kpi-section">
-    <div class="section-header fade-in">
-      <div class="section-title"><span class="num">01</span> ANALYTICS METRICS</div>
-      <div class="header-line"></div>
+  <!-- KPI METRICS -->
+  <section class="section" style="padding-top:2rem;">
+    <div class="sec-head fi">
+      <div class="sec-title"><span class="n">01</span> ANALYTICS METRICS</div>
+      <div class="line"></div>
     </div>
-
     <div class="kpi-grid">
 
-      <div class="glow-card bracket-card kpi-card fade-in stagger-1">
-        <div class="kpi-label">PROJECTS COMPLETED</div>
-        <div class="kpi-value" data-target="4" data-suffix="">0</div>
-        <div class="kpi-sub">Dashboard & Analytics Projects</div>
-        <div class="kpi-sparkline"></div>
+      <div class="card cbracket kpi-card fi d1">
+        <div class="kpi-lbl">PROJECTS COMPLETED</div>
+        <div class="kpi-val" data-kpi="4" data-sfx="">0</div>
+        <div class="kpi-sub">Dashboard &amp; Analytics Projects</div>
+        <div class="kpi-spark"></div>
       </div>
 
-      <div class="glow-card bracket-card kpi-card fade-in stagger-2">
-        <div class="kpi-label">TOOLS MASTERED</div>
-        <div class="kpi-value green" data-target="7" data-suffix="+">0</div>
-        <div class="kpi-sub">Tableau, SQL, Python, Excel & more</div>
-        <div class="kpi-sparkline" style="background: linear-gradient(90deg, var(--green), #00cc66); box-shadow: 0 0 6px var(--green-glow);"></div>
+      <div class="card cbracket kpi-card fi d2">
+        <div class="kpi-lbl">TOOLS MASTERED</div>
+        <div class="kpi-val g" data-kpi="7" data-sfx="+">0</div>
+        <div class="kpi-sub">Tableau · SQL · Python · Excel</div>
+        <div class="kpi-spark" style="background:linear-gradient(90deg,var(--green),#00cc66);box-shadow:0 0 6px var(--green-g)"></div>
       </div>
 
-      <div class="glow-card bracket-card kpi-card fade-in stagger-3">
-        <div class="kpi-label">SKILLS TRACKED</div>
-        <div class="kpi-value purple" data-target="12" data-suffix="">0</div>
-        <div class="kpi-sub">Technical & Analytical Competencies</div>
-        <div class="kpi-sparkline" style="background: linear-gradient(90deg, #7b2fff, #b084ff); box-shadow: 0 0 6px rgba(123,47,255,0.4);"></div>
+      <div class="card cbracket kpi-card fi d3">
+        <div class="kpi-lbl">SKILLS TRACKED</div>
+        <div class="kpi-val p" data-kpi="12" data-sfx="">0</div>
+        <div class="kpi-sub">Technical &amp; Analytical Competencies</div>
+        <div class="kpi-spark" style="background:linear-gradient(90deg,#7b2fff,var(--purple));box-shadow:0 0 6px rgba(160,96,255,.4)"></div>
       </div>
 
-      <div class="glow-card bracket-card kpi-card fade-in stagger-4">
-        <div class="kpi-label">INTERNSHIP STATUS</div>
-        <div class="kpi-value orange" style="font-size: 1.4rem; margin-top: 0.5rem;">SEEKING</div>
+      <div class="card cbracket kpi-card fi d4">
+        <div class="kpi-lbl">INTERNSHIP STATUS</div>
+        <div class="kpi-val o" style="font-size:1.3rem;padding-top:.5rem;">SEEKING</div>
         <div class="kpi-sub">Open to Analytics Opportunities</div>
-        <div class="kpi-sparkline" style="background: linear-gradient(90deg, var(--orange), #ffaa00); box-shadow: 0 0 6px rgba(255,107,53,0.4);"></div>
+        <div class="kpi-spark" style="background:linear-gradient(90deg,var(--orange),#ffaa00);box-shadow:0 0 6px rgba(255,107,53,.4)"></div>
       </div>
 
     </div>
   </section>
 
-  <!-- ═══ FEATURED SECTION ═══ -->
-  <section class="page-section" style="padding-top: 0;">
-    <div class="section-header fade-in">
-      <div class="section-title"><span class="num">02</span> SPECIALIZATION DOMAINS</div>
-      <div class="header-line"></div>
+  <!-- DOMAIN CARDS -->
+  <section class="section" style="padding-top:0">
+    <div class="sec-head fi">
+      <div class="sec-title"><span class="n">02</span> SPECIALIZATION DOMAINS</div>
+      <div class="line"></div>
     </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1.5rem">
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-
-      <div class="glow-card bracket-card fade-in stagger-1" style="padding: 1.5rem;">
-        <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--cyan); letter-spacing: 0.2em; margin-bottom: 0.75rem;">DOMAIN_01</div>
-        <div style="font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">Data Visualization</div>
-        <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">Building executive-grade Tableau dashboards with KPI cards, dual-axis charts, and interactive filters that communicate business insights clearly.</div>
+      <div class="card cbracket fi d1" style="padding:1.5rem">
+        <div style="font-family:var(--f-mono);font-size:.62rem;color:var(--cyan);letter-spacing:.2em;margin-bottom:.6rem">DOMAIN_01</div>
+        <div style="font-family:var(--f-head);font-size:.95rem;font-weight:700;color:var(--txt);margin-bottom:.5rem">Data Visualization</div>
+        <div style="font-size:.85rem;color:var(--txt2);line-height:1.65">Building executive-grade Tableau dashboards with KPI cards, dual-axis charts, and interactive filters that communicate business insights clearly.</div>
       </div>
 
-      <div class="glow-card bracket-card fade-in stagger-2" style="padding: 1.5rem;">
-        <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--green); letter-spacing: 0.2em; margin-bottom: 0.75rem;">DOMAIN_02</div>
-        <div style="font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">Statistical Analytics</div>
-        <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">Applying regression, correlation analysis, hypothesis testing, and distribution modeling to derive statistically sound business recommendations.</div>
+      <div class="card cbracket fi d2" style="padding:1.5rem">
+        <div style="font-family:var(--f-mono);font-size:.62rem;color:var(--green);letter-spacing:.2em;margin-bottom:.6rem">DOMAIN_02</div>
+        <div style="font-family:var(--f-head);font-size:.95rem;font-weight:700;color:var(--txt);margin-bottom:.5rem">Statistical Analytics</div>
+        <div style="font-size:.85rem;color:var(--txt2);line-height:1.65">Applying regression, correlation, hypothesis testing, and distribution modeling to derive statistically sound business recommendations.</div>
       </div>
 
-      <div class="glow-card bracket-card fade-in stagger-3" style="padding: 1.5rem;">
-        <div style="font-family: var(--font-mono); font-size: 0.65rem; color: #b084ff; letter-spacing: 0.2em; margin-bottom: 0.75rem;">DOMAIN_03</div>
-        <div style="font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">Business Intelligence</div>
-        <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">Translating raw operational data into pricing, revenue, and customer segmentation insights aligned with strategic business objectives.</div>
+      <div class="card cbracket fi d3" style="padding:1.5rem">
+        <div style="font-family:var(--f-mono);font-size:.62rem;color:var(--purple);letter-spacing:.2em;margin-bottom:.6rem">DOMAIN_03</div>
+        <div style="font-family:var(--f-head);font-size:.95rem;font-weight:700;color:var(--txt);margin-bottom:.5rem">Business Intelligence</div>
+        <div style="font-size:.85rem;color:var(--txt2);line-height:1.65">Translating raw operational data into pricing, revenue, and customer segmentation insights aligned with strategic objectives.</div>
       </div>
 
     </div>
   </section>
 
-  <!-- ═══ FOOTER ═══ -->
-  <footer class="footer">
-    <div class="footer-left">
-      <span>[DN]</span> DATANEXUS v2.0 — <span>SUJIT MURARI</span> — Business Analytics Portfolio
-    </div>
-    <div class="footer-right">
-      DEV BHOOMI UTTARAKHAND UNIVERSITY · SEM IV · 2025
-    </div>
+  <footer>
+    <div class="ft-l"><span>[DN]</span> DATANEXUS v2.0 — <span>SUJIT MURARI</span> — Business Analytics Portfolio</div>
+    <div class="ft-r">DEV BHOOMI UTTARAKHAND UNIVERSITY · SEM IV · 2025</div>
   </footer>
 
-</div><!-- end site-wrapper -->
+</div><!-- #page -->
 
 <script src="./assets/js/loader.js"></script>
 <script src="./assets/js/script.js"></script>

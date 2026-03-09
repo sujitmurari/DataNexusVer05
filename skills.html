@@ -1,36 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Skills — DataNexus | Sujit Murari</title>
-  <link rel="icon" href="./assets/icons/favicon.ico">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/css/style.css">
-  <style>
-    /* CRITICAL: Structural fallback before full CSS loads */
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    body{background:#040a12;color:#e8f4fd;font-family:monospace;overflow-x:hidden}
-    #boot-screen{position:fixed;inset:0;background:#000;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column}
-    #site-wrapper{opacity:0;transition:opacity 0.8s ease;position:relative;z-index:2}
-    #site-wrapper.visible{opacity:1}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skills — DataNexus | Sujit Murari</title>
+<link rel="icon" href="./assets/icons/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="./assets/css/style.css">
 </head>
 <body>
 
-<div id="site-wrapper">
+<canvas id="matrix"></canvas>
+<div class="grid-bg"></div>
+<div class="scan"></div>
 
-  <canvas id="matrix-canvas"></canvas>
-  <div class="grid-overlay"></div>
-  <div class="scan-line"></div>
+<div id="page">
 
-  <!-- NAV -->
   <nav class="nav">
-    <a href="./index.html" class="nav-logo">
-      <span class="logo-bracket">[</span>DN<span class="logo-bracket">]</span> DATANEXUS
-    </a>
+    <a href="./index.html" class="nav-logo"><em>[</em>DN<em>]</em>&nbsp;DATANEXUS</a>
     <ul class="nav-links">
       <li><a href="./index.html">Home</a></li>
       <li><a href="./skills.html">Skills</a></li>
@@ -39,258 +28,140 @@
       <li><a href="./connect.html">Connect</a></li>
       <li><a href="./contact.html">Contact</a></li>
     </ul>
-    <div class="nav-status"><div class="status-dot"></div><span id="nav-clock">00:00:00</span></div>
-    <div class="nav-toggle" id="nav-toggle"><span></span><span></span><span></span></div>
+    <div class="nav-right"><div class="dot"></div><span id="clock">00:00:00</span></div>
+    <div class="nav-ham" id="nav-ham"><span></span><span></span><span></span></div>
   </nav>
-  <div class="nav-mobile" id="nav-mobile">
+  <div class="nav-mob" id="nav-mob">
     <a href="./index.html">◈ Home</a><a href="./skills.html">◈ Skills</a>
     <a href="./projects.html">◈ Projects</a><a href="./about.html">◈ About</a>
     <a href="./connect.html">◈ Connect</a><a href="./contact.html">◈ Contact</a>
   </div>
 
-  <!-- PAGE CONTENT -->
-  <main class="page page-section">
+  <main class="page-wrap section">
 
-    <!-- Page Header -->
-    <div style="margin-bottom: 1rem;">
-      <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--green); letter-spacing: 0.3em; margin-bottom: 0.75rem;">
-        ◈ SKILL MATRIX — DATANEXUS ANALYST PROFILE
-      </div>
-      <h1 style="font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; letter-spacing: -0.02em; background: linear-gradient(135deg, #fff 30%, var(--cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.5rem;">
-        SKILL MATRIX
-      </h1>
-      <p style="font-family: var(--font-body); color: var(--text-secondary); max-width: 540px; font-size: 1rem; font-weight: 300;">
-        Competency levels measured across visualization, analytics, programming, and business intelligence systems.
-      </p>
+    <div class="fi" style="margin-bottom:2.5rem">
+      <div style="font-family:var(--f-mono);font-size:.68rem;color:var(--green);letter-spacing:.3em;margin-bottom:.6rem">◈ SKILL MATRIX — ANALYST PROFILE</div>
+      <h1 style="font-family:var(--f-head);font-size:clamp(2rem,6vw,3.5rem);font-weight:900;letter-spacing:-.02em;background:linear-gradient(140deg,#fff 25%,var(--cyan) 85%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">SKILL MATRIX</h1>
+      <p style="color:var(--txt2);max-width:520px;font-weight:300;margin-top:.5rem">Competency levels across visualization, analytics, programming, and business intelligence.</p>
     </div>
 
-    <div class="section-header fade-in" style="margin-bottom: 2rem;">
-      <div class="section-title"><span class="num">◈</span> SYSTEM METRICS — PROFICIENCY SCAN</div>
-      <div class="header-line"></div>
-    </div>
+    <div class="sec-head fi"><div class="sec-title"><span class="n">◈</span> PROFICIENCY SCAN</div><div class="line"></div></div>
 
-    <!-- Skills Grid -->
     <div class="skills-grid">
 
       <!-- Visualization -->
-      <div class="glow-card skill-group fade-in stagger-1">
-        <div class="skill-group-title">
-          <span>◈</span> VISUALIZATION TOOLS
-        </div>
+      <div class="card skill-group fi d1">
+        <div class="sg-title"><span>◈</span> VISUALIZATION TOOLS</div>
 
-        <div class="skill-item">
-          <div class="skill-header">
-            <span class="skill-name">Tableau Public</span>
-            <span class="skill-pct">92%</span>
-          </div>
-          <div class="skill-bar-track">
-            <div class="skill-bar-fill cyan-bar" data-width="92%"></div>
-          </div>
-          <div class="skill-mono-display">████████████░░ KPI Dashboards · Dual-Axis · Calculated Fields</div>
+        <div class="sk-item">
+          <div class="sk-hd"><span class="sk-name">Tableau Public</span><span class="sk-pct">92%</span></div>
+          <div class="sk-track"><div class="sk-fill bc" data-w="92%"></div></div>
+          <div class="sk-mono">KPI Dashboards · Dual-Axis · Calculated Fields · Parameters</div>
         </div>
-
-        <div class="skill-item">
-          <div class="skill-header">
-            <span class="skill-name">Microsoft Excel</span>
-            <span class="skill-pct">89%</span>
-          </div>
-          <div class="skill-bar-track">
-            <div class="skill-bar-fill cyan-bar" data-width="89%"></div>
-          </div>
-          <div class="skill-mono-display">███████████░░░ Pivot Tables · VLOOKUP · Financial Modeling</div>
+        <div class="sk-item">
+          <div class="sk-hd"><span class="sk-name">Microsoft Excel</span><span class="sk-pct">89%</span></div>
+          <div class="sk-track"><div class="sk-fill bc" data-w="89%"></div></div>
+          <div class="sk-mono">Pivot Tables · VLOOKUP · Financial Modeling · Charts</div>
         </div>
-
-        <div class="skill-item">
-          <div class="skill-header">
-            <span class="skill-name">Power BI</span>
-            <span class="skill-pct">72%</span>
-          </div>
-          <div class="skill-bar-track">
-            <div class="skill-bar-fill cyan-bar" data-width="72%"></div>
-          </div>
-          <div class="skill-mono-display">█████████░░░░░ DAX Measures · Reports · Data Model</div>
+        <div class="sk-item">
+          <div class="sk-hd"><span class="sk-name">Power BI</span><span class="sk-pct">72%</span></div>
+          <div class="sk-track"><div class="sk-fill bc" data-w="72%"></div></div>
+          <div class="sk-mono">DAX Measures · Reports · Data Model</div>
         </div>
-
       </div>
 
       <!-- Programming -->
-      <div class="glow-card skill-group fade-in stagger-2">
-        <div class="skill-group-title">
-          <span>◈</span> PROGRAMMING & QUERY
-        </div>
+      <div class="card skill-group fi d2">
+        <div class="sg-title"><span>◈</span> PROGRAMMING &amp; QUERY</div>
 
-        <div class="skill-item">
-          <div class="skill-header">
-            <span class="skill-name">SQL</span>
-            <span class="skill-pct">76%</span>
-          </div>
-          <div class="skill-bar-track">
-            <div class="skill-bar-fill green-bar" data-width="76%"></div>
-          </div>
-          <div class="skill-mono-display">██████████░░░░ JOINs · Aggregation · Subqueries · Window Fn</div>
+        <div class="sk-item">
+          <div class="sk-hd"><span class="sk-name">SQL</span><span class="sk-pct">76%</span></div>
+          <div class="sk-track"><div class="sk-fill bg" data-w="76%"></div></div>
+          <div class="sk-mono">JOINs · Aggregation · Subqueries · Window Functions</div>
         </div>
-
-        <div class="skill-item">
-          <div class="skill-header">
-            <span class="skill-name">Python</span>
-            <span class="skill-pct">73%</span>
-          </div>
-          <div class="skill-bar-track">
-            <div class="skill-bar-fill green-bar" data-width="73%"></div>
-          </div>
-          <div class="skill-mono-display">█████████░░░░░ Pandas · NumPy · Matplotlib · Seaborn</div>
+        <div class="sk-item">
+          <div class="sk-hd"><span class="sk-name">Python</span><span class="sk-pct">73%</span></div>
+          <div class="sk-track"><div class="sk-fill bg" data-w="73%"></div></div>
+          <div class="sk-mono">Pandas · NumPy · Matplotlib · Seaborn · EDA</div>
         </div>
-
-        <div class="skill-item">
-          <div class="skill-header">
-            <span class="skill-name">Pandas</span>
-            <span class="skill-pct">78%</span>
-          </div>
-          <div class="skill-bar-track">
-            <div class="skill-bar-fill green-bar" data-width="78%"></div>
-          </div>
-          <div class="skill-mono-display">██████████░░░░ Data Cleaning · Transformation · EDA</div>
+        <div class="sk-item">
+          <div class="sk-hd"><span class="sk-name">Pandas</span><span class="sk-pct">78%</span></div>
+          <div class="sk-track"><div class="sk-fill bg" data-w="78%"></div></div>
+          <div class="sk-mono">Data Cleaning · Transformation · Aggregation</div>
         </div>
-
       </div>
 
       <!-- Statistics -->
-      <div class="glow-card skill-group fade-in stagger-3">
-        <div class="skill-group-title">
-          <span>◈</span> STATISTICAL ANALYSIS
-        </div>
+      <div class="card skill-group fi d3">
+        <div class="sg-title"><span>◈</span> STATISTICAL ANALYSIS</div>
 
-        <div class="skill-item">
-          <div class="skill-header">
-            <span class="skill-name">Regression Analysis</span>
-            <span class="skill-pct">80%</span>
-          </div>
-          <div class="skill-bar-track">
-            <div class="skill-bar-fill purple-bar" data-width="80%"></div>
-          </div>
-          <div class="skill-mono-display">██████████░░░░ Linear · Multiple · Trend Lines</div>
+        <div class="sk-item">
+          <div class="sk-hd"><span class="sk-name">Regression Analysis</span><span class="sk-pct">80%</span></div>
+          <div class="sk-track"><div class="sk-fill bp" data-w="80%"></div></div>
+          <div class="sk-mono">Linear · Multiple · Trend Lines · R-squared</div>
         </div>
-
-        <div class="skill-item">
-          <div class="skill-header">
-            <span class="skill-name">Correlation & Distribution</span>
-            <span class="skill-pct">77%</span>
-          </div>
-          <div class="skill-bar-track">
-            <div class="skill-bar-fill purple-bar" data-width="77%"></div>
-          </div>
-          <div class="skill-mono-display">██████████░░░░ Pearson · Spearman · Histograms</div>
+        <div class="sk-item">
+          <div class="sk-hd"><span class="sk-name">Correlation &amp; Distribution</span><span class="sk-pct">77%</span></div>
+          <div class="sk-track"><div class="sk-fill bp" data-w="77%"></div></div>
+          <div class="sk-mono">Pearson · Spearman · Histograms · Box Plots</div>
         </div>
-
-        <div class="skill-item">
-          <div class="skill-header">
-            <span class="skill-name">Hypothesis Testing</span>
-            <span class="skill-pct">68%</span>
-          </div>
-          <div class="skill-bar-track">
-            <div class="skill-bar-fill purple-bar" data-width="68%"></div>
-          </div>
-          <div class="skill-mono-display">█████████░░░░░ T-Test · Chi-Square · P-Values</div>
+        <div class="sk-item">
+          <div class="sk-hd"><span class="sk-name">Hypothesis Testing</span><span class="sk-pct">68%</span></div>
+          <div class="sk-track"><div class="sk-fill bp" data-w="68%"></div></div>
+          <div class="sk-mono">T-Test · Chi-Square · P-Values · Confidence</div>
         </div>
-
       </div>
 
       <!-- Business Analytics -->
-      <div class="glow-card skill-group fade-in stagger-4">
-        <div class="skill-group-title">
-          <span>◈</span> BUSINESS ANALYTICS
-        </div>
+      <div class="card skill-group fi d4">
+        <div class="sg-title"><span>◈</span> BUSINESS ANALYTICS</div>
 
-        <div class="skill-item">
-          <div class="skill-header">
-            <span class="skill-name">KPI Monitoring</span>
-            <span class="skill-pct">88%</span>
-          </div>
-          <div class="skill-bar-track">
-            <div class="skill-bar-fill cyan-bar" data-width="88%"></div>
-          </div>
-          <div class="skill-mono-display">███████████░░░ Dashboard Design · Benchmarking</div>
+        <div class="sk-item">
+          <div class="sk-hd"><span class="sk-name">KPI Monitoring</span><span class="sk-pct">88%</span></div>
+          <div class="sk-track"><div class="sk-fill bc" data-w="88%"></div></div>
+          <div class="sk-mono">Dashboard Design · Benchmarking · Scorecards</div>
         </div>
-
-        <div class="skill-item">
-          <div class="skill-header">
-            <span class="skill-name">Pricing Analytics</span>
-            <span class="skill-pct">82%</span>
-          </div>
-          <div class="skill-bar-track">
-            <div class="skill-bar-fill cyan-bar" data-width="82%"></div>
-          </div>
-          <div class="skill-mono-display">███████████░░░ Elasticity · Discount Analysis · Revenue</div>
+        <div class="sk-item">
+          <div class="sk-hd"><span class="sk-name">Pricing Analytics</span><span class="sk-pct">82%</span></div>
+          <div class="sk-track"><div class="sk-fill bc" data-w="82%"></div></div>
+          <div class="sk-mono">Elasticity · Discount Analysis · Revenue Modeling</div>
         </div>
-
-        <div class="skill-item">
-          <div class="skill-header">
-            <span class="skill-name">Customer Segmentation</span>
-            <span class="skill-pct">75%</span>
-          </div>
-          <div class="skill-bar-track">
-            <div class="skill-bar-fill cyan-bar" data-width="75%"></div>
-          </div>
-          <div class="skill-mono-display">█████████░░░░░ RFM · Cohort · Behavioral Analysis</div>
+        <div class="sk-item">
+          <div class="sk-hd"><span class="sk-name">Customer Segmentation</span><span class="sk-pct">75%</span></div>
+          <div class="sk-track"><div class="sk-fill bc" data-w="75%"></div></div>
+          <div class="sk-mono">RFM · Cohort · Behavioral Analysis</div>
         </div>
-
       </div>
 
-    </div><!-- end skills-grid -->
-
-    <!-- Certifications / Courses block -->
-    <div class="section-header fade-in" style="margin-top: 4rem; margin-bottom: 2rem;">
-      <div class="section-title"><span class="num">◈</span> ACADEMIC MODULES — ACTIVE</div>
-      <div class="header-line"></div>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
-
-      <div class="glow-card fade-in stagger-1" style="padding: 1.25rem; display: flex; gap: 1rem; align-items: flex-start;">
-        <div style="color: var(--cyan); font-size: 1rem; margin-top: 0.1rem;">◈</div>
-        <div>
-          <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--cyan); margin-bottom: 0.3rem;">24BAN206I</div>
-          <div style="font-family: var(--font-display); font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Finance Analytics</div>
-          <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.2rem;">DBUU · Sem IV</div>
-        </div>
+    <!-- Courses -->
+    <div class="sec-head fi" style="margin-top:4rem;margin-bottom:1.75rem">
+      <div class="sec-title"><span class="n">◈</span> ACTIVE ACADEMIC MODULES</div>
+      <div class="line"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem">
+      <div class="card fi d1" style="padding:1.2rem;display:flex;gap:.9rem;align-items:flex-start">
+        <div style="color:var(--cyan);margin-top:.1rem">◈</div>
+        <div><div style="font-family:var(--f-mono);font-size:.68rem;color:var(--cyan);margin-bottom:.3rem">24BAN206I</div><div style="font-family:var(--f-head);font-size:.82rem;font-weight:600;color:var(--txt)">Finance Analytics</div><div style="font-size:.72rem;color:var(--txt3);margin-top:.2rem">DBUU · Sem IV</div></div>
       </div>
-
-      <div class="glow-card fade-in stagger-2" style="padding: 1.25rem; display: flex; gap: 1rem; align-items: flex-start;">
-        <div style="color: var(--green); font-size: 1rem; margin-top: 0.1rem;">◈</div>
-        <div>
-          <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--green); margin-bottom: 0.3rem;">CORE MODULE</div>
-          <div style="font-family: var(--font-display); font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Cost & Management Accounting</div>
-          <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.2rem;">DBUU · Sem IV</div>
-        </div>
+      <div class="card fi d2" style="padding:1.2rem;display:flex;gap:.9rem;align-items:flex-start">
+        <div style="color:var(--green);margin-top:.1rem">◈</div>
+        <div><div style="font-family:var(--f-mono);font-size:.68rem;color:var(--green);margin-bottom:.3rem">CORE MODULE</div><div style="font-family:var(--f-head);font-size:.82rem;font-weight:600;color:var(--txt)">Cost &amp; Management Accounting</div><div style="font-size:.72rem;color:var(--txt3);margin-top:.2rem">DBUU · Sem IV</div></div>
       </div>
-
-      <div class="glow-card fade-in stagger-3" style="padding: 1.25rem; display: flex; gap: 1rem; align-items: flex-start;">
-        <div style="color: #b084ff; font-size: 1rem; margin-top: 0.1rem;">◈</div>
-        <div>
-          <div style="font-family: var(--font-mono); font-size: 0.75rem; color: #b084ff; margin-bottom: 0.3rem;">CORE MODULE</div>
-          <div style="font-family: var(--font-display); font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Human Resource Management</div>
-          <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.2rem;">DBUU · Sem IV</div>
-        </div>
+      <div class="card fi d3" style="padding:1.2rem;display:flex;gap:.9rem;align-items:flex-start">
+        <div style="color:var(--purple);margin-top:.1rem">◈</div>
+        <div><div style="font-family:var(--f-mono);font-size:.68rem;color:var(--purple);margin-bottom:.3rem">CORE MODULE</div><div style="font-family:var(--f-head);font-size:.82rem;font-weight:600;color:var(--txt)">Human Resource Management</div><div style="font-size:.72rem;color:var(--txt3);margin-top:.2rem">DBUU · Sem IV</div></div>
       </div>
-
-      <div class="glow-card fade-in stagger-4" style="padding: 1.25rem; display: flex; gap: 1rem; align-items: flex-start;">
-        <div style="color: var(--orange); font-size: 1rem; margin-top: 0.1rem;">◈</div>
-        <div>
-          <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--orange); margin-bottom: 0.3rem;">CORE MODULE</div>
-          <div style="font-family: var(--font-display); font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Human Resource Planning</div>
-          <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.2rem;">DBUU · Sem IV</div>
-        </div>
+      <div class="card fi d4" style="padding:1.2rem;display:flex;gap:.9rem;align-items:flex-start">
+        <div style="color:var(--orange);margin-top:.1rem">◈</div>
+        <div><div style="font-family:var(--f-mono);font-size:.68rem;color:var(--orange);margin-bottom:.3rem">CORE MODULE</div><div style="font-family:var(--f-head);font-size:.82rem;font-weight:600;color:var(--txt)">Human Resource Planning</div><div style="font-size:.72rem;color:var(--txt3);margin-top:.2rem">DBUU · Sem IV</div></div>
       </div>
-
     </div>
 
   </main>
 
-  <footer class="footer">
-    <div class="footer-left"><span>[DN]</span> DATANEXUS v2.0 — <span>SUJIT MURARI</span></div>
-    <div class="footer-right">DEV BHOOMI UTTARAKHAND UNIVERSITY · SEM IV · 2025</div>
-  </footer>
-
+  <footer><div class="ft-l"><span>[DN]</span> DATANEXUS — <span>SUJIT MURARI</span></div><div class="ft-r">DBUU · SEM IV · 2025</div></footer>
 </div>
 
 <script src="./assets/js/loader.js"></script>

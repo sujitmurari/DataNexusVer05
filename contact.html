@@ -1,34 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contact — DataNexus | Sujit Murari</title>
-  <link rel="icon" href="./assets/icons/favicon.ico">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/css/style.css">
-  <style>
-    /* CRITICAL: Structural fallback before full CSS loads */
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    body{background:#040a12;color:#e8f4fd;font-family:monospace;overflow-x:hidden}
-    #boot-screen{position:fixed;inset:0;background:#000;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column}
-    #site-wrapper{opacity:0;transition:opacity 0.8s ease;position:relative;z-index:2}
-    #site-wrapper.visible{opacity:1}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — DataNexus | Sujit Murari</title>
+<link rel="icon" href="./assets/icons/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="./assets/css/style.css">
 </head>
 <body>
 
-<div id="site-wrapper">
-  <canvas id="matrix-canvas"></canvas>
-  <div class="grid-overlay"></div>
-  <div class="scan-line"></div>
+<canvas id="matrix"></canvas>
+<div class="grid-bg"></div>
+<div class="scan"></div>
+
+<div id="page">
 
   <nav class="nav">
-    <a href="./index.html" class="nav-logo">
-      <span class="logo-bracket">[</span>DN<span class="logo-bracket">]</span> DATANEXUS
-    </a>
+    <a href="./index.html" class="nav-logo"><em>[</em>DN<em>]</em>&nbsp;DATANEXUS</a>
     <ul class="nav-links">
       <li><a href="./index.html">Home</a></li>
       <li><a href="./skills.html">Skills</a></li>
@@ -37,173 +28,131 @@
       <li><a href="./connect.html">Connect</a></li>
       <li><a href="./contact.html">Contact</a></li>
     </ul>
-    <div class="nav-status"><div class="status-dot"></div><span id="nav-clock">00:00:00</span></div>
-    <div class="nav-toggle" id="nav-toggle"><span></span><span></span><span></span></div>
+    <div class="nav-right"><div class="dot"></div><span id="clock">00:00:00</span></div>
+    <div class="nav-ham" id="nav-ham"><span></span><span></span><span></span></div>
   </nav>
-  <div class="nav-mobile" id="nav-mobile">
+  <div class="nav-mob" id="nav-mob">
     <a href="./index.html">◈ Home</a><a href="./skills.html">◈ Skills</a>
     <a href="./projects.html">◈ Projects</a><a href="./about.html">◈ About</a>
     <a href="./connect.html">◈ Connect</a><a href="./contact.html">◈ Contact</a>
   </div>
 
-  <main class="page page-section">
+  <main class="page-wrap section">
 
-    <div style="margin-bottom: 2rem;">
-      <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--green); letter-spacing: 0.3em; margin-bottom: 0.75rem;">
-        ◈ SECURE TRANSMISSION CHANNEL — ENCRYPTED
-      </div>
-      <h1 style="font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; letter-spacing: -0.02em; background: linear-gradient(135deg, #fff 30%, var(--cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.5rem;">
-        CONTACT
-      </h1>
-      <p style="font-family: var(--font-body); color: var(--text-secondary); max-width: 480px; font-size: 1rem; font-weight: 300;">
-        Open a direct channel. Whether it's an internship offer, collaboration, or just a data conversation.
-      </p>
+    <div class="fi" style="margin-bottom:2.5rem">
+      <div style="font-family:var(--f-mono);font-size:.68rem;color:var(--green);letter-spacing:.3em;margin-bottom:.6rem">◈ SECURE TRANSMISSION CHANNEL</div>
+      <h1 style="font-family:var(--f-head);font-size:clamp(2rem,6vw,3.5rem);font-weight:900;letter-spacing:-.02em;background:linear-gradient(140deg,#fff 25%,var(--cyan) 85%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">CONTACT</h1>
+      <p style="color:var(--txt2);max-width:460px;font-weight:300;margin-top:.5rem">Open a direct channel. Internship offers, collaborations, or just a data conversation.</p>
     </div>
 
-    <div class="contact-layout">
+    <div class="contact-grid">
 
-      <!-- Left: Info Cards -->
-      <div class="contact-info">
+      <!-- Left: Info -->
+      <div class="fi">
+        <div style="font-family:var(--f-mono);font-size:.68rem;color:var(--cyan);letter-spacing:.1em;margin-bottom:1.25rem">$ ssh hire@sujit-murari.nexus</div>
 
-        <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--cyan); letter-spacing: 0.15em; margin-bottom: 0.5rem;">
-          $ ssh <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0f67667d6a4f7c7a65667b22627a7d6e7d6621616a777a7c">[email&#160;protected]</a>
+        <div class="card ci-card d1">
+          <div class="ci-lbl">CHANNEL</div>
+          <div class="ci-val">Direct Email</div>
+          <div class="ci-sub">sujitmurari@email.com</div>
         </div>
 
-        <div class="glow-card contact-info-card fade-in stagger-1">
-          <div class="contact-info-label">CHANNEL</div>
-          <div class="contact-info-value">Direct Email</div>
-          <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2c5f5946455841595e4d5e456c49414d4540024f4341">[email&#160;protected]</a></div>
+        <div class="card ci-card d2">
+          <div class="ci-lbl">LOCATION</div>
+          <div class="ci-val">Uttarakhand, India</div>
+          <div class="ci-sub">UTC +5:30 IST</div>
         </div>
 
-        <div class="glow-card contact-info-card fade-in stagger-2">
-          <div class="contact-info-label">LOCATION</div>
-          <div class="contact-info-value">Uttarakhand, India</div>
-          <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">UTC +5:30 IST</div>
+        <div class="card ci-card d3">
+          <div class="ci-lbl">RESPONSE TIME</div>
+          <div class="ci-val" style="color:var(--green)">Within 24 Hours</div>
+          <div class="ci-sub">Mon–Sat · 9AM–9PM IST</div>
         </div>
 
-        <div class="glow-card contact-info-card fade-in stagger-3">
-          <div class="contact-info-label">RESPONSE TIME</div>
-          <div class="contact-info-value" style="color: var(--green);">Within 24 Hours</div>
-          <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">Mon–Sat · 9AM–9PM IST</div>
+        <div class="card ci-card d4">
+          <div class="ci-lbl">LOOKING FOR</div>
+          <div class="ci-val" style="color:var(--orange)">Analytics Internship</div>
+          <div class="ci-sub">Data Analyst · BI Analyst · Tableau Developer</div>
         </div>
 
-        <div class="glow-card contact-info-card fade-in stagger-4">
-          <div class="contact-info-label">LOOKING FOR</div>
-          <div class="contact-info-value" style="color: var(--orange);">Analytics Internship</div>
-          <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">Data Analyst · BI Analyst · Tableau Developer</div>
-        </div>
-
-        <!-- Status block -->
-        <div class="glow-card fade-in stagger-5" style="padding: 1.25rem; background: rgba(0,255,136,0.03); border-color: rgba(0,255,136,0.2);">
-          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
-            <div class="status-dot"></div>
-            <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--green); letter-spacing: 0.1em;">SYSTEM ONLINE</div>
+        <div class="card fi" style="padding:1.2rem;background:rgba(0,255,136,.03);border-color:rgba(0,255,136,.2);margin-top:1rem">
+          <div style="display:flex;align-items:center;gap:.7rem;margin-bottom:.4rem">
+            <div class="dot"></div>
+            <div style="font-family:var(--f-mono);font-size:.68rem;color:var(--green);letter-spacing:.1em">SYSTEM ONLINE</div>
           </div>
-          <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim);">
-            All channels operational. Messages are encrypted and delivered in real time.
-          </div>
+          <div style="font-family:var(--f-mono);font-size:.68rem;color:var(--txt3)">All channels operational. Messages delivered in real time.</div>
         </div>
-
       </div>
 
       <!-- Right: Terminal Form -->
-      <div class="terminal-form glow-card fade-in stagger-1">
-        <div class="terminal-titlebar">
-          <div class="t-dot red"></div>
-          <div class="t-dot yellow"></div>
-          <div class="t-dot green"></div>
-          <div class="terminal-title">secure-channel@datanexus:~$ connect --hire sujit</div>
+      <!-- Replace YOUR_FORM_ID with your Formspree endpoint -->
+      <div class="term card fi d1">
+        <div class="term-bar">
+          <div class="td r"></div><div class="td y"></div><div class="td g"></div>
+          <div class="term-title">secure-channel@datanexus:~$ connect --hire sujit</div>
         </div>
+        <div class="form-body">
 
-        <div class="form-terminal-body">
-
-          <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--green); margin-bottom: 1.5rem; line-height: 1.8;">
-            <div>> Initializing secure channel...</div>
-            <div>> Encryption: AES-256 ✓</div>
-            <div>> Connection established ✓</div>
-            <div>> Ready to transmit</div>
+          <div style="font-family:var(--f-mono);font-size:.72rem;color:var(--green);margin-bottom:1.5rem;line-height:1.9">
+            <div>&gt; Initializing secure channel...</div>
+            <div>&gt; Encryption: AES-256 &#10003;</div>
+            <div>&gt; Connection established &#10003;</div>
+            <div>&gt; Ready to transmit</div>
           </div>
 
-          <!-- NOTE: Replace YOUR_FORM_ID with actual Formspree ID -->
-          <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" novalidate>
-
-            <div class="form-line">
-              <span class="form-prompt">root@nexus:~$</span>
-              <span class="form-label">name:</span>
-              <input
-                type="text"
-                name="name"
-                id="field-name"
-                class="form-input"
-                placeholder="Your name..."
-                autocomplete="off"
-                required
-              >
-            </div>
-
-            <div class="form-line">
-              <span class="form-prompt">root@nexus:~$</span>
-              <span class="form-label">email:</span>
-              <input
-                type="email"
-                name="email"
-                id="field-email"
-                class="form-input"
-                placeholder="your@email.com"
-                autocomplete="off"
-                required
-              >
-            </div>
-
-            <div class="form-line">
-              <span class="form-prompt">root@nexus:~$</span>
-              <span class="form-label">subject:</span>
-              <input
-                type="text"
-                name="subject"
-                id="field-subject"
-                class="form-input"
-                placeholder="Internship inquiry / Collaboration / Other..."
-                autocomplete="off"
-              >
-            </div>
-
-            <div style="margin-bottom: 1.25rem;">
-              <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
-                <span class="form-prompt">root@nexus:~$</span>
-                <span class="form-label">message:</span>
-              </div>
-              <textarea
-                name="message"
-                id="field-message"
-                class="form-input"
-                placeholder="Type your message here..."
-                required
-              ></textarea>
-            </div>
-
-            <!-- Honeypot -->
+          <form id="cf" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" novalidate>
             <input type="text" name="_gotcha" style="display:none">
-            <input type="hidden" name="_subject" value="New message from DataNexus Portfolio">
+            <input type="hidden" name="_subject" value="New DataNexus Portfolio Message">
 
-            <div class="form-submit-line">
-              <button type="submit" class="btn btn-primary">
-                <span>▸</span> TRANSMIT MESSAGE
-              </button>
-              <span id="form-status" class="form-status">Awaiting input...</span>
+            <div class="f-line">
+              <span class="f-prompt">root@nexus:~$</span>
+              <span class="f-lbl">name:</span>
+              <input type="text" name="name" class="f-in" placeholder="Your name..." required autocomplete="off">
             </div>
 
+            <div class="f-line">
+              <span class="f-prompt">root@nexus:~$</span>
+              <span class="f-lbl">email:</span>
+              <input type="email" name="email" class="f-in" placeholder="your@email.com" required autocomplete="off">
+            </div>
+
+            <div class="f-line">
+              <span class="f-prompt">root@nexus:~$</span>
+              <span class="f-lbl">subject:</span>
+              <input type="text" name="subject" class="f-in" placeholder="Internship / Collaboration / Other...">
+            </div>
+
+            <div style="margin-bottom:1.2rem">
+              <div class="f-line" style="margin-bottom:.4rem">
+                <span class="f-prompt">root@nexus:~$</span>
+                <span class="f-lbl">message:</span>
+              </div>
+              <textarea name="message" class="f-in" placeholder="Type your message here..." required></textarea>
+            </div>
+
+            <div class="f-submit">
+              <button type="submit" class="btn btn-c">&#9658; TRANSMIT MESSAGE</button>
+              <span id="fs" class="f-status">Awaiting input...</span>
+            </div>
           </form>
 
-          <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border);">
-            <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim); line-height: 1.8;">
-              <span style="color: var(--cyan);"># Alternatively:</span><br>
-              Email directly: <span style="color: var(--cyan);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="abd8dec1c2dfc6ded9cad9c2ebcec6cac2c785c8c4c6">[email&#160;protected]</a></span><br>
-              LinkedIn: <span style="color: var(--cyan);">linkedin.com/in/sujit-murari</span>
-            </div>
+          <div style="margin-top:2rem;padding-top:1.2rem;border-top:1px solid var(--border);font-family:var(--f-mono);font-size:.68rem;color:var(--txt3);line-height:1.9">
+            <span style="color:var(--cyan)"># Alternatively:</span><br>
+            Email: <span style="color:var(--cyan)">sujitmurari@email.com</span><br>
+            LinkedIn: <span style="color:var(--cyan)">linkedin.com/in/sujit-murari</span>
           </div>
 
         </div>
       </div>
 
-    </div><!-- en
+    </div>
+
+  </main>
+
+  <footer><div class="ft-l"><span>[DN]</span> DATANEXUS — <span>SUJIT MURARI</span></div><div class="ft-r">DBUU · SEM IV · 2025</div></footer>
+</div>
+
+<script src="./assets/js/loader.js"></script>
+<script src="./assets/js/script.js"></script>
+</body>
+</html>

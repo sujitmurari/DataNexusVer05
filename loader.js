@@ -1,189 +1,199 @@
 'use strict';
-/* ============================================================
-   DATANEXUS — LOADER v3  (bulletproof rewrite)
-   All delays are ABSOLUTE from boot-start using cumulative
-   scheduling. No recursion. No sessionStorage issues.
-   A hard failsafe forces the site visible after 7 seconds.
-   ============================================================ */
+/* ==========================================================
+   DN3 LOADER — Fail-safe architecture:
+   - #page is ALWAYS visible (no opacity trick)
+   - #boot is position:fixed overlay — we just REMOVE it
+   - 7s absolute failsafe clears boot no matter what
+   ========================================================== */
 
-var BOOT_LINES = [
-  { html: '<span style="color:#00d4ff">[SYS]</span> DATANEXUS v2.0 — Analytics Intelligence Platform', t: 100 },
-  { html: '<span style="color:#00d4ff">[INF]</span> Initializing analytics kernel...', t: 500 },
-  { html: '<span style="color:#00ff88">[OK ]</span> Memory allocation: 8.2 GB confirmed', t: 900 },
-  { html: '<span style="color:#00ff88">[OK ]</span> Loading module: <span style="color:#00d4ff">tableau.connector</span>', t: 1200 },
-  { html: '<span style="color:#00ff88">[OK ]</span> Loading module: <span style="color:#00d4ff">sql.engine</span>', t: 1500 },
-  { html: '<span style="color:#00ff88">[OK ]</span> Loading module: <span style="color:#00d4ff">python.analytics</span>', t: 1800 },
-  { html: '<span style="color:#00ff88">[OK ]</span> Loading module: <span style="color:#00d4ff">excel.processor</span>', t: 2100 },
-  { html: '<span style="color:#00ff88">[OK ]</span> Loading module: <span style="color:#00d4ff">pandas.dataframes</span>', t: 2400 },
-  { html: '<span style="color:#ff6b35">[INF]</span> Calibrating dashboard environment...', t: 2750 },
-  { html: '<span style="color:#00ff88">[OK ]</span> Visualization engine ready', t: 3000 },
-  { html: '<span style="color:#00ff88">[OK ]</span> KPI metrics loaded — 4 dashboards online', t: 3250 },
-  { html: '<span style="color:#00d4ff">--------------------------------------------------</span>', t: 3500 },
-  { html: '<span style="color:#00ff88"> >> SYSTEM READY</span>', t: 3700 }
+// Boot log lines: t = absolute ms from DOMContentLoaded
+var LINES = [
+  { t:  80, html: '<span style="color:#00d4ff">[SYS]</span> DATANEXUS v2.0 — Analytics Platform' },
+  { t: 450, html: '<span style="color:#00d4ff">[INF]</span> Initializing analytics kernel...' },
+  { t: 850, html: '<span style="color:#00ff88">[OK ]</span> Memory allocated: 8.2 GB' },
+  { t:1150, html: '<span style="color:#00ff88">[OK ]</span> Module: <span style="color:#00d4ff">tableau.connector</span>' },
+  { t:1450, html: '<span style="color:#00ff88">[OK ]</span> Module: <span style="color:#00d4ff">sql.engine</span>' },
+  { t:1750, html: '<span style="color:#00ff88">[OK ]</span> Module: <span style="color:#00d4ff">python.analytics</span>' },
+  { t:2050, html: '<span style="color:#00ff88">[OK ]</span> Module: <span style="color:#00d4ff">excel.processor</span>' },
+  { t:2350, html: '<span style="color:#00ff88">[OK ]</span> Module: <span style="color:#00d4ff">pandas.dataframes</span>' },
+  { t:2700, html: '<span style="color:#ff6b35">[INF]</span> Calibrating dashboard environment...' },
+  { t:2950, html: '<span style="color:#00ff88">[OK ]</span> Visualization engine ready' },
+  { t:3200, html: '<span style="color:#00ff88">[OK ]</span> KPI metrics loaded — 4 dashboards active' },
+  { t:3450, html: '<span style="color:#00d4ff">――――――――――――――――――――――――――――――――――――</span>' },
+  { t:3650, html: '<span style="color:#00ff88"> >> SYSTEM READY. Welcome, Analyst.</span>' }
 ];
 
-function showSite() {
-  var boot = document.getElementById('boot-screen');
-  var wrapper = document.getElementById('site-wrapper');
-  if (boot) {
-    boot.style.transition = 'opacity 0.7s ease';
-    boot.style.opacity = '0';
-    setTimeout(function() { boot.style.display = 'none'; }, 750);
-  }
-  if (wrapper) {
-    wrapper.classList.add('visible');
-    wrapper.style.opacity = '1';
-  }
-  startMatrixRain();
-  initScrollAnimations();
+/* Remove the boot overlay */
+function clearBoot() {
+  var el = document.getElementById('boot');
+  if (!el) return;
+  el.classList.add('done');
+  setTimeout(function() {
+    if (el.parentNode) el.parentNode.removeChild(el);
+  }, 700);
 }
 
-function runBootSequence() {
-  var terminal = document.getElementById('boot-terminal');
-  var fillEl = document.getElementById('boot-progress-fill');
-  var pctEl = document.getElementById('boot-progress-pct');
-  var total = BOOT_LINES.length;
-  var failsafe = setTimeout(showSite, 7000);
+/* Boot sequence — only on index.html */
+function runBoot() {
+  var box  = document.getElementById('boot-box');
+  var fill = document.getElementById('boot-fill');
+  var pct  = document.getElementById('boot-pct');
+  var total = LINES.length;
 
-  BOOT_LINES.forEach(function(item, idx) {
+  /* Absolute failsafe — always fires after 7s */
+  var failsafe = setTimeout(clearBoot, 7000);
+
+  LINES.forEach(function(item, i) {
     setTimeout(function() {
-      if (terminal) {
+      /* Add line */
+      if (box) {
         var row = document.createElement('div');
-        row.style.cssText = 'color:#00ff88;font-size:0.82rem;margin-bottom:0.35rem;font-family:monospace;opacity:0;transition:opacity 0.3s';
+        row.className = 'boot-line';
         row.innerHTML = item.html;
-        terminal.appendChild(row);
-        setTimeout(function() { row.style.opacity = '1'; }, 30);
-        terminal.scrollTop = terminal.scrollHeight;
+        box.appendChild(row);
+        box.scrollTop = box.scrollHeight;
       }
-      var pct = Math.round(((idx + 1) / total) * 100);
-      if (fillEl) fillEl.style.width = pct + '%';
-      if (pctEl) pctEl.textContent = pct + '%';
-      if (idx === total - 1) {
+      /* Progress */
+      var p = Math.round(((i + 1) / total) * 100);
+      if (fill) fill.style.width = p + '%';
+      if (pct)  pct.textContent  = p + '%';
+      /* Last line */
+      if (i === total - 1) {
         clearTimeout(failsafe);
-        setTimeout(showSite, 900);
+        setTimeout(clearBoot, 900);
       }
     }, item.t);
   });
 }
 
-function startMatrixRain() {
-  var canvas = document.getElementById('matrix-canvas');
-  if (!canvas) return;
-  var ctx = canvas.getContext('2d');
-  var CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*><{}[]|=+-~';
-  var FS = 12;
+/* Matrix rain */
+function rain() {
+  var c = document.getElementById('matrix');
+  if (!c) return;
+  var ctx = c.getContext('2d');
+  var CH  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*><{}[]|=+-~';
+  var FS  = 12;
   var cols, drops;
-
   function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    cols = Math.floor(canvas.width / FS);
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+    cols = Math.floor(c.width / FS);
     drops = [];
-    for (var i = 0; i < cols; i++) drops[i] = Math.floor(Math.random() * -50);
+    for (var i = 0; i < cols; i++) drops[i] = Math.random() * -100 | 0;
   }
   resize();
   window.addEventListener('resize', resize);
-
   setInterval(function() {
-    ctx.fillStyle = 'rgba(4,10,18,0.07)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'rgba(3,8,15,.07)';
+    ctx.fillRect(0, 0, c.width, c.height);
     ctx.fillStyle = '#00d4ff';
     ctx.font = FS + 'px monospace';
     for (var i = 0; i < cols; i++) {
-      ctx.fillText(CHARS[Math.floor(Math.random() * CHARS.length)], i * FS, drops[i] * FS);
-      if (drops[i] * FS > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      ctx.fillText(CH[Math.random() * CH.length | 0], i * FS, drops[i] * FS);
+      if (drops[i] * FS > c.height && Math.random() > 0.975) drops[i] = 0;
       drops[i]++;
     }
   }, 55);
 }
 
-function initScrollAnimations() {
-  var fadeEls = document.querySelectorAll('.fade-in');
-  var bars = document.querySelectorAll('.skill-bar-fill');
+/* Scroll reveal */
+function reveals() {
+  var fis = document.querySelectorAll('.fi');
+  var bars = document.querySelectorAll('.sk-fill');
 
   if (!('IntersectionObserver' in window)) {
-    // Fallback: show everything immediately
-    fadeEls.forEach(function(el) { el.classList.add('visible'); });
-    bars.forEach(function(b) { var w = b.getAttribute('data-width'); if (w) b.style.width = w; });
+    fis.forEach(function(e) { e.classList.add('show'); });
+    bars.forEach(function(b) {
+      var w = b.getAttribute('data-w'); if (w) b.style.width = w;
+    });
     return;
   }
 
-  var fadeObs = new IntersectionObserver(function(entries) {
-    entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+  var fo = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('show'); });
   }, { threshold: 0.08 });
-  fadeEls.forEach(function(el) { fadeObs.observe(el); });
+  fis.forEach(function(e) { fo.observe(e); });
 
-  var barObs = new IntersectionObserver(function(entries) {
+  var bo = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) {
-        var w = e.target.getAttribute('data-width');
+        var w = e.target.getAttribute('data-w');
         if (w) e.target.style.width = w;
       }
     });
   }, { threshold: 0.15 });
-  bars.forEach(function(b) { barObs.observe(b); });
+  bars.forEach(function(b) { bo.observe(b); });
 }
 
-function setActiveNav() {
-  var page = window.location.pathname.split('/').pop() || 'index.html';
-  if (!page || page === '') page = 'index.html';
-  document.querySelectorAll('.nav-links a, .nav-mobile a').forEach(function(a) {
-    var href = (a.getAttribute('href') || '').replace('./', '');
-    if (href === page) a.classList.add('active');
+/* Nav active */
+function navActive() {
+  var pg = window.location.pathname.split('/').pop() || 'index.html';
+  if (!pg) pg = 'index.html';
+  document.querySelectorAll('.nav-links a, .nav-mob a').forEach(function(a) {
+    var h = (a.getAttribute('href') || '').replace('./', '');
+    if (h === pg) a.classList.add('active');
   });
 }
 
-function initMobileNav() {
-  var toggle = document.getElementById('nav-toggle');
-  var mob = document.getElementById('nav-mobile');
-  if (!toggle || !mob) return;
-  toggle.addEventListener('click', function() { mob.classList.toggle('open'); });
+/* Mobile nav */
+function mobileNav() {
+  var btn = document.getElementById('nav-ham');
+  var mob = document.getElementById('nav-mob');
+  if (!btn || !mob) return;
+  btn.addEventListener('click', function() { mob.classList.toggle('open'); });
   mob.querySelectorAll('a').forEach(function(a) {
     a.addEventListener('click', function() { mob.classList.remove('open'); });
   });
 }
 
-function startClock() {
-  var el = document.getElementById('nav-clock');
+/* Clock */
+function clock() {
+  var el = document.getElementById('clock');
   if (!el) return;
   function tick() {
     var d = new Date();
-    el.textContent = String(d.getHours()).padStart(2,'0') + ':' +
-                     String(d.getMinutes()).padStart(2,'0') + ':' +
-                     String(d.getSeconds()).padStart(2,'0');
+    el.textContent =
+      ('0' + d.getHours()).slice(-2) + ':' +
+      ('0' + d.getMinutes()).slice(-2) + ':' +
+      ('0' + d.getSeconds()).slice(-2);
   }
-  tick(); setInterval(tick, 1000);
+  tick();
+  setInterval(tick, 1000);
 }
 
-function startTicker() {
-  var el = document.getElementById('terminal-ticker');
+/* Ticker */
+function ticker() {
+  var el = document.getElementById('ticker');
   if (!el) return;
-  var msgs = ['DATANEXUS ONLINE','ANALYTICS ENGINE: ACTIVE','PROCESSING DATA STREAMS...','TABLEAU CONNECTED','SQL QUERIES: 1,842 EXECUTED','PYTHON MODELS: LOADED','KPI MONITORING: LIVE','DASHBOARD STATUS: OPTIMAL','ANALYST: SUJIT MURARI','STATUS: READY'];
-  var idx = 0;
+  var M = ['DATANEXUS ONLINE', 'ANALYTICS ENGINE: ACTIVE', 'PROCESSING DATA STREAMS',
+           'TABLEAU CONNECTED', 'SQL QUERIES: 1,842 EXECUTED', 'PYTHON MODELS: LOADED',
+           'KPI MONITORING: LIVE', 'ANALYST: SUJIT MURARI', 'STATUS: READY'];
+  var i = 0;
   el.style.transition = 'opacity 0.4s';
   setInterval(function() {
     el.style.opacity = '0';
-    setTimeout(function() { el.textContent = '> ' + msgs[idx++ % msgs.length]; el.style.opacity = '1'; }, 420);
+    setTimeout(function() { el.textContent = '> ' + M[i++ % M.length]; el.style.opacity = '1'; }, 420);
   }, 4000);
 }
 
+/* Init */
 document.addEventListener('DOMContentLoaded', function() {
-  var bootScreen = document.getElementById('boot-screen');
-  var wrapper = document.getElementById('site-wrapper');
-  var path = window.location.pathname;
-  var isHome = path === '/' || path === '' || path.endsWith('/') || path.toLowerCase().endsWith('index.html');
+  var path  = window.location.pathname;
+  var isIdx = path === '/' || path === '' || path.endsWith('/')
+           || path.toLowerCase().endsWith('index.html');
 
-  if (bootScreen && isHome) {
-    runBootSequence();
+  if (isIdx) {
+    runBoot();
   } else {
-    if (bootScreen) bootScreen.style.display = 'none';
-    if (wrapper) { wrapper.classList.add('visible'); wrapper.style.opacity = '1'; }
-    startMatrixRain();
-    initScrollAnimations();
+    /* Non-index: just remove boot instantly */
+    var b = document.getElementById('boot');
+    if (b && b.parentNode) b.parentNode.removeChild(b);
   }
 
-  setActiveNav();
-  initMobileNav();
-  startClock();
-  startTicker();
+  rain();
+  reveals();
+  navActive();
+  mobileNav();
+  clock();
+  ticker();
 });
