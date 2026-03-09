@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics Lab — DataNexus | Sujit Murari</title>
+  <link rel="icon" href="./assets/icons/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/style.css">
+  <style>
+    /* CRITICAL: Structural fallback before full CSS loads */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:#040a12;color:#e8f4fd;font-family:monospace;overflow-x:hidden}
+    #site-wrapper{opacity:0;transition:opacity 0.8s ease;position:relative;z-index:2}
+    #site-wrapper.visible{opacity:1}
+  </style>
+
+  <!-- Chart + parsers (page-specific) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-box-and-violin-plot@4.3.0/build/index.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@2.0.0/dist/chartjs-chart-matrix.umd.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <!-- Scoped Analytics Lab layout styles (do not touch core theme) -->
+  <style>
+    .lab-dashboard {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+      position: relative;
+      z-index: 2;
+    }
+    .lab-section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .lab-section-title {
+      font-family: var(--font-mono, "Share Tech Mono", monospace);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.8rem;
+      color: var(--cyan, #35e0ff);
+    }
+    .lab-section-subtitle {
+      font-family: var(--font-mono, "Share Tech Mono", monospace);
+      font-size: 0.75rem;
+      color: var(--text-dim, #8ca3c2);
+    }
+    .lab-upload-input {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      margin-top: 0.75rem;
+    }
+    .lab-upload-input input[type="file"] {
+      font-family: var(--font-mono, "Share Tech Mono", monospace);
+      font-size: 0.8rem;
+      max-width: 260px;
+      color: var(--text-primary, #e8f4fd);
+    }
+    .lab-upload-btn {
+      font-family: var(--font-mono, "Share Tech Mono", monospace);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      padding: 0.55rem 1.4rem;
+      border-radius: 999px;
+      border: 1px solid var(--cyan, #35e0ff);
+      background: radial-gradient(circle at top left, rgba(53, 224, 255, 0.22), transparent),
+                  rgba(7, 15, 35, 0.9);
+      color: var(--text-primary, #e8f4fd);
+      cursor: pointer;
+      transition: box-shadow 0.18s ease, transform 0.12s ease, background 0.18s ease;
+    }
+    .lab-upload-btn:hover {
+      box-shadow: 0 0 20px rgba(53, 224, 255, 0.7);
+      transform: translateY(-1px);
+    }
+    .lab-upload-meta {
+      font-family: var(--font-mono, "Share Tech Mono", monospace);
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+      color: var(--text-dim, #8ca3c2);
+    }
+    .lab-loading {
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      font-family: var(--font-mono, "Share Tech Mono", monospace);
+      font-size: 0.85rem;
+      color: var(--cyan, #35e0ff);
+    }
+    .lab-loading-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--cyan, #35e0ff);
+      box-shadow: 0 0 10px rgba(53, 224, 255, 0.9);
+      animation: lab-pulse 1s infinite ease-in-out;
+    }
+    .lab-loading-dot:nth-child(2) { animation-delay: 0.18s; }
+    .lab-loading-dot:nth-child(3) { animation-delay: 0.36s; }
+    @keyframes lab-pulse {
+      0%, 100% { transform: scale(0.9); opacity: 0.35; }
+      50% { transform: scale(1.35); opacity: 1; }
+    }
+    .lab-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.5rem;
+    }
+    @media (min-width: 900px) {
+      .lab-grid-2 {
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      }
+    }
+    .lab-insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-top: 0.75rem;
+    }
+    .lab-metric {
+      padding: 0.75rem 0.9rem;
+      border-radius: 0.8rem;
+      border: 1px solid rgba(53, 224, 255, 0.18);
+      background: radial-gradient(circle at top left, rgba(53, 224, 255, 0.12), transparent),
+                  rgba(5, 10, 30, 0.85);
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.04);
+    }
+    .lab-metric-label {
+      font-family: var(--font-mono, "Share Tech Mono", monospace);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--text-dim, #8ca3c2);
+      margin-bottom: 0.15rem;
+    }
+    .lab-metric-value {
+      font-family: var(--font-display, "Orbitron", system-ui);
+      font-size: 1.05rem;
+      color: var(--text-primary, #e8f4fd);
+    }
+    .lab-metric-caption {
+      font-family: var(--font-mono, "Share Tech Mono", monospace);
+      font-size: 0.7rem;
+      color: var(--text-dim, #8ca3c2);
+      margin-top: 0.1rem;
+    }
+    .lab-chart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-top: 0.75rem;
+    }
+    .lab-chart-card {
+      padding: 0.9rem 1rem 1rem;
+    }
+    .lab-chart-title {
+      font-family: var(--font-mono, "Share Tech Mono", monospace);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--cyan-soft, #88f0ff);
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 0.4rem;
+    }
+    .lab-chart-meta {
+      font-size: 0.7rem;
+      color: var(--text-dim, #8ca3c2);
+    }
+    .lab-empty-state {
+      font-family: var(--font-mono, "Share Tech Mono", monospace);
+      font-size: 0.8rem;
+      color: var(--text-dim, #8ca3c2);
+      padding: 0.25rem 0;
+    }
+  </style>
+</head>
+<body>
+
+<div id="site-wrapper">
+
+  <canvas id="matrix-canvas"></canvas>
+  <div class="grid-overlay"></div>
+  <div class="scan-line"></div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="./index.html" class="nav-logo">
+      <span class="logo-bracket">[</span>DN<span class="logo-bracket">]</span> DATANEXUS
+    </a>
+    <ul class="nav-links">
+      <li><a href="./index.html">Home</a></li>
+      <li><a href="./skills.html">Skills</a></li>
+      <li><a href="./projects.html">Projects</a></li>
+      <li><a href="./lab.html">Analytics Lab</a></li>
+      <li><a href="./about.html">About</a></li>
+      <li><a href="./connect.html">Connect</a></li>
+      <li><a href="./contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-status"><div class="status-dot"></div><span id="nav-clock">00:00:00</span></div>
+    <div class="nav-toggle" id="nav-toggle"><span></span><span></span><span></span></div>
+  </nav>
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="./index.html">◈ Home</a><a href="./skills.html">◈ Skills</a>
+    <a href="./projects.html">◈ Projects</a><a href="./lab.html">◈ Analytics Lab</a>
+    <a href="./about.html">◈ About</a><a href="./connect.html">◈ Connect</a><a href="./contact.html">◈ Contact</a>
+  </div>
+
+  <!-- ANALYTICS LAB DASHBOARD -->
+  <main class="lab-dashboard page-section">
+
+    <!-- Top: Dataset Upload -->
+    <section class="glow-card" style="margin-bottom: 1.5rem;">
+      <div class="section-header lab-section-header">
+        <div>
+          <div class="lab-section-title">Dataset Upload</div>
+          <div class="lab-section-subtitle">
+            Ingest CSV / Excel files and let DataNexus auto-profile your dataset.
+          </div>
+        </div>
+        <div class="lab-section-subtitle">
+          Max ~10,000 rows · Local-only processing · No data sent to server
+        </div>
+      </div>
+
+      <div class="lab-upload-input">
+        <input type="file" id="datasetInput" accept=".csv, .xls, .xlsx">
+        <button class="lab-upload-btn" id="analyzeBtn">Ingest Dataset</button>
+      </div>
+
+      <div class="lab-upload-meta" id="datasetMeta">
+        No dataset loaded. Supported formats: CSV, XLSX, XLS.
+      </div>
+
+      <div class="lab-loading" id="labLoading">
+        <div class="lab-loading-dot"></div>
+        <div class="lab-loading-dot"></div>
+        <div class="lab-loading-dot"></div>
+        <span>Analyzing dataset...</span>
+      </div>
+    </section>
+
+    <!-- Middle: Insights + Dataset Profile -->
+    <section class="page-section" style="padding-top: 0; margin-bottom: 1.5rem;">
+      <div class="lab-grid lab-grid-2">
+
+        <!-- Analytics Insights Panel -->
+        <div class="glow-card">
+          <div class="section-header lab-section-header">
+            <div>
+              <div class="lab-section-title">Analytics Insights Panel</div>
+              <div class="lab-section-subtitle">
+                Record count, central tendency, spread, and range auto-computed from numeric fields.
+              </div>
+            </div>
+          </div>
+
+          <div class="lab-insights-grid" id="insightsGrid">
+            <div class="lab-empty-state">
+              Upload a dataset to unlock live statistics.
+            </div>
+          </div>
+        </div>
+
+        <!-- Dataset Profile -->
+        <div class="glow-card">
+          <div class="section-header lab-section-header">
+            <div>
+              <div class="lab-section-title">Dataset Profile</div>
+              <div class="lab-section-subtitle">
+                Schema pulse, numeric coverage, and raw sample preview.
+              </div>
+            </div>
+          </div>
+
+          <div id="datasetProfile" class="lab-empty-state">
+            Waiting for dataset…
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Bottom: Visualization Grid -->
+    <section class="glow-card page-section" style="padding-top: 1.5rem;">
+      <div class="section-header lab-section-header">
+        <div>
+          <div class="lab-section-title">Visualization Grid</div>
+          <div class="lab-section-subtitle">
+            Histogram · Scatter · Line · Bar · Box Plot · Correlation Heatmap.
+          </div>
+        </div>
+      </div>
+
+      <div class="lab-chart-grid" id="chartGrid">
+        <div class="lab-empty-state">
+          Once a dataset is ingested, visualizations will auto-materialize as you scroll.
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-left"><span>[DN]</span> DATANEXUS v2.0 — <span>SUJIT MURARI</span></div>
+    <div class="footer-right">DEV BHOOMI UTTARAKHAND UNIVERSITY · SEM IV · 2025</div>
+  </footer>
+
+</div>
+
+<script src="./assets/js/loader.js"></script>
+<script src="./assets/js/script.js"></script>
+<script src="./assets/js/analytics.js"></script>
+</body>
+</html>
