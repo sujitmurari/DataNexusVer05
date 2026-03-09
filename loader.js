@@ -1,230 +1,183 @@
-/* ==========================================
-   DATANEXUS — LOADER & MATRIX RAIN ENGINE
-   ========================================== */
+'use strict';
+/* ============================================================
+   DATANEXUS — LOADER v3  (bulletproof rewrite)
+   All delays are ABSOLUTE from boot-start using cumulative
+   scheduling. No recursion. No sessionStorage issues.
+   A hard failsafe forces the site visible after 7 seconds.
+   ============================================================ */
 
-// ===== BOOT SEQUENCE =====
-const bootLines = [
-  { text: '<span class="prompt">[SYS]</span> DATANEXUS v2.0 — Analytics Intelligence Platform', delay: 0 },
-  { text: '<span class="prompt">[INF]</span> Initializing analytics kernel...', delay: 400 },
-  { text: '<span class="ok">[OK ]</span> Memory allocation: 8.2 GB', delay: 700 },
-  { text: '<span class="ok">[OK ]</span> Loading module: <span class="prompt">tableau.connector</span>', delay: 1000 },
-  { text: '<span class="ok">[OK ]</span> Loading module: <span class="prompt">sql.engine</span>', delay: 1200 },
-  { text: '<span class="ok">[OK ]</span> Loading module: <span class="prompt">python.analytics</span>', delay: 1400 },
-  { text: '<span class="ok">[OK ]</span> Loading module: <span class="prompt">excel.processor</span>', delay: 1600 },
-  { text: '<span class="ok">[OK ]</span> Loading module: <span class="prompt">pandas.dataframes</span>', delay: 1800 },
-  { text: '<span class="warn">[INF]</span> Calibrating dashboard environment...', delay: 2100 },
-  { text: '<span class="ok">[OK ]</span> Visualization engine ready', delay: 2400 },
-  { text: '<span class="ok">[OK ]</span> KPI metrics loaded', delay: 2600 },
-  { text: '<span class="prompt">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>', delay: 2800 },
-  { text: '<span class="ok">  ██ SYSTEM READY — Welcome, Analyst. ██</span>', delay: 3000 },
+var BOOT_LINES = [
+  { html: '<span style="color:#00d4ff">[SYS]</span> DATANEXUS v2.0 — Analytics Intelligence Platform', t: 100 },
+  { html: '<span style="color:#00d4ff">[INF]</span> Initializing analytics kernel...', t: 500 },
+  { html: '<span style="color:#00ff88">[OK ]</span> Memory allocation: 8.2 GB confirmed', t: 900 },
+  { html: '<span style="color:#00ff88">[OK ]</span> Loading module: <span style="color:#00d4ff">tableau.connector</span>', t: 1200 },
+  { html: '<span style="color:#00ff88">[OK ]</span> Loading module: <span style="color:#00d4ff">sql.engine</span>', t: 1500 },
+  { html: '<span style="color:#00ff88">[OK ]</span> Loading module: <span style="color:#00d4ff">python.analytics</span>', t: 1800 },
+  { html: '<span style="color:#00ff88">[OK ]</span> Loading module: <span style="color:#00d4ff">excel.processor</span>', t: 2100 },
+  { html: '<span style="color:#00ff88">[OK ]</span> Loading module: <span style="color:#00d4ff">pandas.dataframes</span>', t: 2400 },
+  { html: '<span style="color:#ff6b35">[INF]</span> Calibrating dashboard environment...', t: 2750 },
+  { html: '<span style="color:#00ff88">[OK ]</span> Visualization engine ready', t: 3000 },
+  { html: '<span style="color:#00ff88">[OK ]</span> KPI metrics loaded — 4 dashboards online', t: 3250 },
+  { html: '<span style="color:#00d4ff">--------------------------------------------------</span>', t: 3500 },
+  { html: '<span style="color:#00ff88"> >> SYSTEM READY</span>', t: 3700 }
 ];
 
-function runBootSequence() {
-  const screen = document.getElementById('boot-screen');
-  if (!screen) return;
-
-  const terminal = document.getElementById('boot-terminal');
-  const progressFill = document.getElementById('boot-progress-fill');
-  const progressPct = document.getElementById('boot-progress-pct');
-  const wrapper = document.getElementById('site-wrapper');
-
-  if (!terminal) return;
-
-  let lineIndex = 0;
-
-  function addLine() {
-    if (lineIndex >= bootLines.length) return;
-    const item = bootLines[lineIndex];
-
-    setTimeout(() => {
-      const el = document.createElement('div');
-      el.className = 'boot-line';
-      el.innerHTML = item.text;
-      terminal.appendChild(el);
-
-      requestAnimationFrame(() => {
-        el.classList.add('active');
-      });
-
-      // scroll to bottom
-      terminal.scrollTop = terminal.scrollHeight;
-
-      // Update progress
-      const pct = Math.round(((lineIndex + 1) / bootLines.length) * 100);
-      if (progressFill) progressFill.style.width = pct + '%';
-      if (progressPct) progressPct.textContent = pct + '%';
-
-      lineIndex++;
-      addLine();
-    }, item.delay);
+function showSite() {
+  var boot = document.getElementById('boot-screen');
+  var wrapper = document.getElementById('site-wrapper');
+  if (boot) {
+    boot.style.transition = 'opacity 0.7s ease';
+    boot.style.opacity = '0';
+    setTimeout(function() { boot.style.display = 'none'; }, 750);
   }
-
-  addLine();
-
-  // Fade out after all lines done
-  const totalDelay = bootLines[bootLines.length - 1].delay + 1200;
-
-  setTimeout(() => {
-    screen.classList.add('fade-out');
-    if (wrapper) {
-      setTimeout(() => {
-        wrapper.classList.add('visible');
-        screen.style.display = 'none';
-        startMatrixRain();
-        initScrollAnimations();
-      }, 800);
-    }
-  }, totalDelay);
+  if (wrapper) {
+    wrapper.classList.add('visible');
+    wrapper.style.opacity = '1';
+  }
+  startMatrixRain();
+  initScrollAnimations();
 }
 
-// ===== MATRIX RAIN =====
-function startMatrixRain() {
-  const canvas = document.getElementById('matrix-canvas');
-  if (!canvas) return;
+function runBootSequence() {
+  var terminal = document.getElementById('boot-terminal');
+  var fillEl = document.getElementById('boot-progress-fill');
+  var pctEl = document.getElementById('boot-progress-pct');
+  var total = BOOT_LINES.length;
+  var failsafe = setTimeout(showSite, 7000);
 
-  const ctx = canvas.getContext('2d');
+  BOOT_LINES.forEach(function(item, idx) {
+    setTimeout(function() {
+      if (terminal) {
+        var row = document.createElement('div');
+        row.style.cssText = 'color:#00ff88;font-size:0.82rem;margin-bottom:0.35rem;font-family:monospace;opacity:0;transition:opacity 0.3s';
+        row.innerHTML = item.html;
+        terminal.appendChild(row);
+        setTimeout(function() { row.style.opacity = '1'; }, 30);
+        terminal.scrollTop = terminal.scrollHeight;
+      }
+      var pct = Math.round(((idx + 1) / total) * 100);
+      if (fillEl) fillEl.style.width = pct + '%';
+      if (pctEl) pctEl.textContent = pct + '%';
+      if (idx === total - 1) {
+        clearTimeout(failsafe);
+        setTimeout(showSite, 900);
+      }
+    }, item.t);
+  });
+}
+
+function startMatrixRain() {
+  var canvas = document.getElementById('matrix-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*><{}[]|=+-~';
+  var FS = 12;
+  var cols, drops;
 
   function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    cols = Math.floor(canvas.width / FS);
+    drops = [];
+    for (var i = 0; i < cols; i++) drops[i] = Math.floor(Math.random() * -50);
   }
-
   resize();
   window.addEventListener('resize', resize);
 
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*><{}[]|=+-~';
-  const fontSize = 12;
-  let cols = Math.floor(canvas.width / fontSize);
-  let drops = Array(cols).fill(1);
-
-  function draw() {
-    ctx.fillStyle = 'rgba(4, 10, 18, 0.07)';
+  setInterval(function() {
+    ctx.fillStyle = 'rgba(4,10,18,0.07)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
     ctx.fillStyle = '#00d4ff';
-    ctx.font = fontSize + 'px Share Tech Mono, monospace';
-
-    for (let i = 0; i < drops.length; i++) {
-      const char = chars[Math.floor(Math.random() * chars.length)];
-      ctx.fillText(char, i * fontSize, drops[i] * fontSize);
-
-      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-        drops[i] = 0;
-      }
+    ctx.font = FS + 'px monospace';
+    for (var i = 0; i < cols; i++) {
+      ctx.fillText(CHARS[Math.floor(Math.random() * CHARS.length)], i * FS, drops[i] * FS);
+      if (drops[i] * FS > canvas.height && Math.random() > 0.975) drops[i] = 0;
       drops[i]++;
     }
-  }
-
-  setInterval(draw, 55);
+  }, 55);
 }
 
-// ===== SCROLL ANIMATIONS =====
 function initScrollAnimations() {
-  // Fade-in elements
-  const fadeEls = document.querySelectorAll('.fade-in');
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-      }
-    });
-  }, { threshold: 0.1 });
+  var fadeEls = document.querySelectorAll('.fade-in');
+  var bars = document.querySelectorAll('.skill-bar-fill');
 
-  fadeEls.forEach(el => obs.observe(el));
-
-  // Skill bars
-  const skillBars = document.querySelectorAll('.skill-bar-fill');
-  const skillObs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        const target = e.target.dataset.width;
-        e.target.style.width = target;
-      }
-    });
-  }, { threshold: 0.2 });
-
-  skillBars.forEach(bar => skillObs.observe(bar));
-}
-
-// ===== NAV ACTIVE STATE =====
-function setActiveNav() {
-  const path = window.location.pathname.split('/').pop() || 'index.html';
-  document.querySelectorAll('.nav-links a, .nav-mobile a').forEach(a => {
-    const href = (a.getAttribute('href') || "").replace("./", "");
-    if (href === path || (path === '' && href === 'index.html')) {
-      a.classList.add('active');
-    }
-  });
-}
-
-// ===== MOBILE NAV =====
-function initMobileNav() {
-  const toggle = document.getElementById('nav-toggle');
-  const mobileNav = document.getElementById('nav-mobile');
-
-  if (!toggle || !mobileNav) return;
-
-  toggle.addEventListener('click', () => {
-    mobileNav.classList.toggle('open');
-  });
-}
-
-// ===== TERMINAL TYPING EFFECT =====
-function typeTerminal(el, text, speed = 40) {
-  return new Promise(resolve => {
-    let i = 0;
-    const interval = setInterval(() => {
-      el.textContent += text[i];
-      i++;
-      if (i >= text.length) {
-        clearInterval(interval);
-        resolve();
-      }
-    }, speed);
-  });
-}
-
-// ===== LIVE CLOCK =====
-function startClock() {
-  const clockEl = document.getElementById('nav-clock');
-  if (!clockEl) return;
-
-  function update() {
-    const now = new Date();
-    const hh = String(now.getHours()).padStart(2, '0');
-    const mm = String(now.getMinutes()).padStart(2, '0');
-    const ss = String(now.getSeconds()).padStart(2, '0');
-    clockEl.textContent = `${hh}:${mm}:${ss}`;
+  if (!('IntersectionObserver' in window)) {
+    // Fallback: show everything immediately
+    fadeEls.forEach(function(el) { el.classList.add('visible'); });
+    bars.forEach(function(b) { var w = b.getAttribute('data-width'); if (w) b.style.width = w; });
+    return;
   }
 
-  update();
-  setInterval(update, 1000);
+  var fadeObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  fadeEls.forEach(function(el) { fadeObs.observe(el); });
+
+  var barObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        var w = e.target.getAttribute('data-width');
+        if (w) e.target.style.width = w;
+      }
+    });
+  }, { threshold: 0.15 });
+  bars.forEach(function(b) { barObs.observe(b); });
 }
 
-// ===== INIT =====
-document.addEventListener('DOMContentLoaded', () => {
-  // Check if already booted (on sub-pages, skip boot)
-  const isHome = window.location.pathname.endsWith('index.html') ||
-                 window.location.pathname.endsWith('/') ||
-                 window.location.pathname === '';
+function setActiveNav() {
+  var page = window.location.pathname.split('/').pop() || 'index.html';
+  if (!page || page === '') page = 'index.html';
+  document.querySelectorAll('.nav-links a, .nav-mobile a').forEach(function(a) {
+    var href = (a.getAttribute('href') || '').replace('./', '');
+    if (href === page) a.classList.add('active');
+  });
+}
 
-  const bootScreen = document.getElementById('boot-screen');
-  const wrapper = document.getElementById('site-wrapper');
-  const alreadyBooted = sessionStorage.getItem('datanexus_booted');
+function initMobileNav() {
+  var toggle = document.getElementById('nav-toggle');
+  var mob = document.getElementById('nav-mobile');
+  if (!toggle || !mob) return;
+  toggle.addEventListener('click', function() { mob.classList.toggle('open'); });
+  mob.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() { mob.classList.remove('open'); });
+  });
+}
 
-  if (bootScreen) {
-    if (isHome && !alreadyBooted) {
-      sessionStorage.setItem('datanexus_booted', 'true');
-      runBootSequence();
-    } else {
-      bootScreen.style.display = 'none';
-      if (wrapper) wrapper.classList.add('visible');
-      startMatrixRain();
-      initScrollAnimations();
-    }
+function startClock() {
+  var el = document.getElementById('nav-clock');
+  if (!el) return;
+  function tick() {
+    var d = new Date();
+    el.textContent = String(d.getHours()).padStart(2,'0') + ':' +
+                     String(d.getMinutes()).padStart(2,'0') + ':' +
+                     String(d.getSeconds()).padStart(2,'0');
+  }
+  tick(); setInterval(tick, 1000);
+}
+
+function startTicker() {
+  var el = document.getElementById('terminal-ticker');
+  if (!el) return;
+  var msgs = ['DATANEXUS ONLINE','ANALYTICS ENGINE: ACTIVE','PROCESSING DATA STREAMS...','TABLEAU CONNECTED','SQL QUERIES: 1,842 EXECUTED','PYTHON MODELS: LOADED','KPI MONITORING: LIVE','DASHBOARD STATUS: OPTIMAL','ANALYST: SUJIT MURARI','STATUS: READY'];
+  var idx = 0;
+  el.style.transition = 'opacity 0.4s';
+  setInterval(function() {
+    el.style.opacity = '0';
+    setTimeout(function() { el.textContent = '> ' + msgs[idx++ % msgs.length]; el.style.opacity = '1'; }, 420);
+  }, 4000);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var bootScreen = document.getElementById('boot-screen');
+  var wrapper = document.getElementById('site-wrapper');
+  var path = window.location.pathname;
+  var isHome = path === '/' || path === '' || path.endsWith('/') || path.toLowerCase().endsWith('index.html');
+
+  if (bootScreen && isHome) {
+    runBootSequence();
   } else {
-    // Sub-pages: no boot screen, show immediately
-    if (wrapper) wrapper.classList.add('visible');
+    if (bootScreen) bootScreen.style.display = 'none';
+    if (wrapper) { wrapper.classList.add('visible'); wrapper.style.opacity = '1'; }
     startMatrixRain();
     initScrollAnimations();
   }
@@ -232,4 +185,5 @@ document.addEventListener('DOMContentLoaded', () => {
   setActiveNav();
   initMobileNav();
   startClock();
+  startTicker();
 });

@@ -1,251 +1,144 @@
-/* ==========================================
-   DATANEXUS — MAIN INTERACTION SCRIPT
-   ========================================== */
+'use strict';
+/* ============================================================
+   DATANEXUS — SCRIPT v3
+   KPI counters, contact form, project tilt, cursor trail
+   ============================================================ */
 
-// ===== KPI COUNTER ANIMATION =====
+// ── KPI COUNTER ANIMATION ─────────────────────────────────────
 function animateCounter(el) {
-  const target = parseInt(el.dataset.target, 10);
-  const suffix = el.dataset.suffix || '';
-  const duration = 1500;
-  const start = performance.now();
-
-  function step(now) {
-    const elapsed = now - start;
-    const progress = Math.min(elapsed / duration, 1);
-    const ease = 1 - Math.pow(1 - progress, 3);
-    const val = Math.floor(ease * target);
-    el.textContent = val + suffix;
-    if (progress < 1) requestAnimationFrame(step);
+  var target = parseInt(el.getAttribute('data-target'), 10);
+  var suffix = el.getAttribute('data-suffix') || '';
+  if (isNaN(target)) return;
+  var duration = 1400;
+  var start = null;
+  function step(ts) {
+    if (!start) start = ts;
+    var elapsed = ts - start;
+    var p = Math.min(elapsed / duration, 1);
+    var eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.floor(eased * target) + suffix;
+    if (p < 1) requestAnimationFrame(step);
+    else el.textContent = target + suffix;
   }
-
   requestAnimationFrame(step);
 }
 
 function initKPICounters() {
-  const counters = document.querySelectorAll('.kpi-value[data-target]');
+  var counters = document.querySelectorAll('.kpi-value[data-target]');
   if (!counters.length) return;
-
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting && !e.target.dataset.done) {
-        e.target.dataset.done = 'true';
+  if (!('IntersectionObserver' in window)) {
+    counters.forEach(animateCounter); return;
+  }
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting && !e.target.getAttribute('data-done')) {
+        e.target.setAttribute('data-done', '1');
         animateCounter(e.target);
       }
     });
   }, { threshold: 0.4 });
-
-  counters.forEach(c => obs.observe(c));
+  counters.forEach(function(c) { obs.observe(c); });
 }
 
-// ===== CONTACT FORM =====
+// ── CONTACT FORM ──────────────────────────────────────────────
 function initContactForm() {
-  const form = document.getElementById('contact-form');
+  var form = document.getElementById('contact-form');
   if (!form) return;
+  var statusEl = document.getElementById('form-status');
 
-  const statusEl = document.getElementById('form-status');
-
-  form.addEventListener('submit', async (e) => {
+  form.addEventListener('submit', function(e) {
     e.preventDefault();
+    var btn = form.querySelector('[type="submit"]');
+    var orig = btn.textContent;
+    btn.textContent = '[ TRANSMITTING... ]';
+    btn.disabled = true;
+    if (statusEl) { statusEl.textContent = '> Establishing secure channel...'; statusEl.className = 'form-status'; }
 
-    const submitBtn = form.querySelector('[type="submit"]');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = '[ TRANSMITTING... ]';
-    submitBtn.disabled = true;
-
-    if (statusEl) {
-      statusEl.textContent = '> Establishing secure channel...';
-      statusEl.className = 'form-status';
-    }
-
-    try {
-      const data = new FormData(form);
-      const response = await fetch(form.action, {
-        method: 'POST',
-        body: data,
-        headers: { 'Accept': 'application/json' }
-      });
-
-      if (response.ok) {
-        if (statusEl) {
-          statusEl.textContent = '> MESSAGE TRANSMITTED SUCCESSFULLY ✓';
-          statusEl.className = 'form-status success';
-        }
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    }).then(function(r) {
+      if (r.ok) {
+        if (statusEl) { statusEl.textContent = '> MESSAGE TRANSMITTED SUCCESSFULLY'; statusEl.className = 'form-status success'; }
         form.reset();
-      } else {
-        throw new Error('Server error');
-      }
-    } catch (err) {
-      if (statusEl) {
-        statusEl.textContent = '> CONNECTION ERROR — Please try again or email directly.';
-        statusEl.className = 'form-status error';
-      }
-    } finally {
-      submitBtn.textContent = originalText;
-      submitBtn.disabled = false;
-    }
-  });
-}
-
-// ===== SMOOTH PAGE TRANSITIONS =====
-function initPageTransitions() {
-  // Only apply fade transitions on http/https — skip for file:// protocol
-  if (window.location.protocol === 'file:') return;
-
-  document.querySelectorAll('a[href]').forEach(link => {
-    const href = link.getAttribute('href');
-    if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto')) return;
-
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const wrapper = document.getElementById('site-wrapper');
-      if (wrapper) {
-        wrapper.style.opacity = '0';
-        wrapper.style.transition = 'opacity 0.3s ease';
-        setTimeout(() => { window.location.href = href; }, 300);
-      } else {
-        window.location.href = href;
-      }
+      } else { throw new Error('Server error'); }
+    }).catch(function() {
+      if (statusEl) { statusEl.textContent = '> CONNECTION ERROR — Please email directly.'; statusEl.className = 'form-status error'; }
+    }).finally(function() {
+      btn.textContent = orig; btn.disabled = false;
     });
   });
 }
 
-// ===== LIVE DATA STREAM (hero decoration) =====
-function initDataStream() {
-  const rows = document.querySelectorAll('.stream-row');
-  if (!rows.length) return;
-
-  const metrics = [
-    ['DATA.IN', '247.3 GB'],
-    ['QUERIES', '1,842'],
-    ['ACCURACY', '97.4%'],
-    ['LATENCY', '12ms'],
-    ['NODES', '16'],
-    ['UPTIME', '99.98%'],
-    ['MODELS', '4'],
-    ['ALERTS', '0'],
-  ];
-
-  rows.forEach((row, i) => {
-    const m = metrics[i % metrics.length];
-    row.querySelector('.stream-key').textContent = m[0];
-    row.querySelector('.stream-val').textContent = m[1];
+// ── PROJECT CARD TILT ─────────────────────────────────────────
+function initProjectCards() {
+  document.querySelectorAll('.project-card').forEach(function(card) {
+    card.addEventListener('mousemove', function(e) {
+      var r = card.getBoundingClientRect();
+      var x = ((e.clientX - r.left) / r.width - 0.5) * 8;
+      var y = ((e.clientY - r.top) / r.height - 0.5) * 8;
+      card.style.transform = 'perspective(600px) rotateY(' + x + 'deg) rotateX(' + (-y) + 'deg)';
+    });
+    card.addEventListener('mouseleave', function() { card.style.transform = ''; });
   });
+}
 
-  // Randomly update values
-  setInterval(() => {
-    const row = rows[Math.floor(Math.random() * rows.length)];
-    const val = row.querySelector('.stream-val');
+// ── CURSOR TRAIL (desktop only) ───────────────────────────────
+function initCursorTrail() {
+  if (window.innerWidth <= 768) return;
+  var dot = document.createElement('div');
+  dot.style.cssText = 'position:fixed;width:5px;height:5px;border-radius:50%;background:#00d4ff;pointer-events:none;z-index:9998;box-shadow:0 0 8px #00d4ff;mix-blend-mode:screen;transition:transform 0.1s';
+  document.body.appendChild(dot);
+  document.addEventListener('mousemove', function(e) {
+    dot.style.left = (e.clientX - 2) + 'px';
+    dot.style.top = (e.clientY - 2) + 'px';
+  });
+}
+
+// ── DATA STREAM (hero decoration) ────────────────────────────
+function initDataStream() {
+  var rows = document.querySelectorAll('.stream-row');
+  if (!rows.length) return;
+  setInterval(function() {
+    var row = rows[Math.floor(Math.random() * rows.length)];
+    var val = row.querySelector('.stream-val');
     if (!val) return;
-
-    const origOpacity = row.style.opacity;
-    row.style.opacity = '1';
-    row.style.color = 'var(--green)';
-
-    setTimeout(() => {
-      row.style.color = '';
-      row.style.opacity = origOpacity;
-    }, 300);
+    var prev = row.style.color;
+    row.style.color = '#00ff88';
+    setTimeout(function() { row.style.color = prev; }, 350);
   }, 1800);
 }
 
-// ===== CURSOR TRAIL =====
-function initCursorEffect() {
-  const trail = document.createElement('div');
-  trail.style.cssText = `
-    position: fixed;
-    width: 4px; height: 4px;
-    border-radius: 50%;
-    background: var(--cyan);
-    pointer-events: none;
-    z-index: 9998;
-    box-shadow: 0 0 6px var(--cyan);
-    transition: transform 0.1s ease;
-    mix-blend-mode: screen;
-  `;
-  document.body.appendChild(trail);
-
-  let mouseX = 0, mouseY = 0;
-
-  document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    trail.style.left = mouseX - 2 + 'px';
-    trail.style.top = mouseY - 2 + 'px';
-  });
-}
-
-// ===== TERMINAL LOG TICKER =====
-function initTerminalTicker() {
-  const ticker = document.getElementById('terminal-ticker');
-  if (!ticker) return;
-
-  const messages = [
-    'DATANEXUS ONLINE',
-    'ANALYTICS ENGINE: ACTIVE',
-    'PROCESSING DATA STREAMS...',
-    'TABLEAU CONNECTED',
-    'SQL QUERIES: 1,842 EXECUTED',
-    'PYTHON MODELS: LOADED',
-    'KPI MONITORING: LIVE',
-    'DASHBOARD STATUS: OPTIMAL',
-    'ANALYST: SUJIT MURARI',
-    'STATUS: READY FOR INSIGHTS',
-  ];
-
-  let idx = 0;
-
-  function showNext() {
-    ticker.style.opacity = '0';
-    setTimeout(() => {
-      ticker.textContent = '> ' + messages[idx % messages.length];
-      ticker.style.opacity = '1';
-      idx++;
-    }, 400);
-  }
-
-  ticker.style.transition = 'opacity 0.4s';
-  showNext();
-  setInterval(showNext, 4000);
-}
-
-// ===== PROJECT CARD HOVER EFFECT =====
-function initProjectCards() {
-  const cards = document.querySelectorAll('.project-card');
-  cards.forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width - 0.5) * 8;
-      const y = ((e.clientY - rect.top) / rect.height - 0.5) * 8;
-      card.style.transform = `perspective(600px) rotateY(${x}deg) rotateX(${-y}deg)`;
-    });
-
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = '';
-    });
-  });
-}
-
-// ===== GLITCH TITLE EFFECT =====
-function initGlitchTitles() {
-  document.querySelectorAll('[data-glitch]').forEach(el => {
+// ── GLITCH DATA-TEXT ATTR ─────────────────────────────────────
+function initGlitch() {
+  document.querySelectorAll('[data-glitch]').forEach(function(el) {
     el.setAttribute('data-text', el.textContent);
   });
 }
 
-// ===== INIT ALL =====
-document.addEventListener('DOMContentLoaded', () => {
+// ── PAGE TRANSITIONS (http/https only) ───────────────────────
+function initPageTransitions() {
+  if (window.location.protocol === 'file:') return;
+  document.querySelectorAll('a[href]').forEach(function(link) {
+    var href = link.getAttribute('href');
+    if (!href || href.charAt(0) === '#' || href.indexOf('http') === 0 || href.indexOf('mailto') === 0) return;
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      var w = document.getElementById('site-wrapper');
+      if (w) { w.style.transition = 'opacity 0.3s'; w.style.opacity = '0'; setTimeout(function() { window.location.href = href; }, 300); }
+      else { window.location.href = href; }
+    });
+  });
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
   initKPICounters();
   initContactForm();
-  initDataStream();
-  initTerminalTicker();
   initProjectCards();
-  initGlitchTitles();
-
-  // Cursor only on desktop
-  if (window.innerWidth > 768) {
-    initCursorEffect();
-  }
-
-  // Page transitions (delay to allow loader to finish)
-  setTimeout(initPageTransitions, 100);
+  initDataStream();
+  initGlitch();
+  initCursorTrail();
+  setTimeout(initPageTransitions, 200);
 });
