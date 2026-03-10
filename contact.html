@@ -12,9 +12,14 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{background:#040a12;color:#e8f4fd;font-family:monospace;overflow-x:hidden}
-    #boot-screen{position:fixed;inset:0;background:#000;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column}
+
+    /* FIX 1: site-wrapper starts invisible; .visible makes it appear */
     #site-wrapper{opacity:0;transition:opacity 0.8s ease;position:relative;z-index:2}
     #site-wrapper.visible{opacity:1}
+
+    /* FIX 2: fallback — if JS never fires, page is still readable after 2s */
+    @keyframes force-visible { to { opacity:1; } }
+    #site-wrapper { animation: force-visible 0s 2s forwards; }
 
     /* ── Page header ── */
     .page-eyebrow { font-family:'Share Tech Mono',monospace; font-size:0.7rem; color:var(--green); letter-spacing:0.3em; margin-bottom:0.75rem; }
@@ -31,7 +36,7 @@
       display: grid;
       grid-template-columns: 1fr;
       gap: 1.5rem;
-      align-items: start;   /* prevents columns from stretching to equal height */
+      align-items: start;
     }
     @media (min-width: 860px) {
       .contact-layout { grid-template-columns: 1fr 380px; align-items: start; }
@@ -133,9 +138,9 @@
       letter-spacing: 0.1em;
     }
 
-    /* ── Success / error state ── */
-    /* script.js sets className = 'form-status' / 'form-status success' / 'form-status error' */
-    .form-msg,
+    /* ── FIX 3: form status message styles ──
+       script.js sets className to 'form-status', 'form-status success', or 'form-status error'.
+       All three states need display:block rules under the .form-status selector. */
     .form-status {
       display: none;
       margin-top: 1rem;
@@ -146,12 +151,25 @@
       letter-spacing: 0.08em;
       line-height: 1.5;
     }
-    /* shown when script.js sets any class */
-    .form-status:not(:empty)        { display: block; border: 1px solid rgba(53,224,255,0.2); color: var(--text-secondary); background: rgba(53,224,255,0.04); }
-    .form-msg.success,
-    .form-status.success { display: block; background: rgba(59,255,184,0.07); border: 1px solid rgba(59,255,184,0.3); color: #3bffb8; }
-    .form-msg.error,
-    .form-status.error   { display: block; background: rgba(255,107,53,0.07); border: 1px solid rgba(255,107,53,0.3); color: #ff9f40; }
+    /* Show whenever element has any text content */
+    .form-status:not(:empty) {
+      display: block;
+      border: 1px solid rgba(53,224,255,0.2);
+      color: var(--text-secondary);
+      background: rgba(53,224,255,0.04);
+    }
+    .form-status.success {
+      display: block;
+      background: rgba(59,255,184,0.07);
+      border: 1px solid rgba(59,255,184,0.3);
+      color: #3bffb8;
+    }
+    .form-status.error {
+      display: block;
+      background: rgba(255,107,53,0.07);
+      border: 1px solid rgba(255,107,53,0.3);
+      color: #ff9f40;
+    }
 
     /* ── Sidebar info ── */
     .contact-sidebar { display: flex; flex-direction: column; gap: 1.25rem; }
@@ -286,6 +304,14 @@
 </head>
 <body>
 
+<!-- FIX 4: boot-screen div MUST exist in the HTML body so loader.js can find it
+     via getElementById('boot-screen'). Without it, the code falls into the else
+     branch and calls wrapper.classList.add('visible') — but if any earlier JS
+     error fires, it never reaches that line. Having the element here ensures the
+     loader always has a known element to work with, and hides it immediately on
+     sub-pages (alreadyBooted path or !isHome path). -->
+<div id="boot-screen" style="display:none;"></div>
+
 <div id="site-wrapper">
   <canvas id="matrix-canvas"></canvas>
   <div class="grid-overlay"></div>
@@ -372,7 +398,8 @@
             <span class="form-submit-note">Response within 24 hrs · IST timezone</span>
           </div>
 
-          <div class="form-msg" id="form-status"></div>
+          <!-- FIX 3 applied here: class is 'form-status' to match what script.js sets -->
+          <div class="form-status" id="form-status"></div>
 
         </form>
       </div>
@@ -393,7 +420,9 @@
             </div>
             <div>
               <div class="info-row-label">Email</div>
-              <div class="info-row-value"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1d6e6877746970686f7c6f745d78707c7471337e7270">[email&#160;protected]</a></div>
+              <div class="info-row-value">
+                <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1d6e6877746970686f7c6f745d78707c7471337e7270">[email&#160;protected]</a>
+              </div>
             </div>
           </div>
 
@@ -501,9 +530,9 @@
     <div class="footer-right">DEV BHOOMI UTTARAKHAND UNIVERSITY · SEM IV · 2025</div>
   </footer>
 
-  </div><!-- end #site-wrapper -->
+</div><!-- end #site-wrapper -->
 
-  <script src="./assets/js/loader.js"></script>
-  <script src="./assets/js/script.js"></script>
+<script src="./assets/js/loader.js"></script>
+<script src="./assets/js/script.js"></script>
 </body>
 </html>
