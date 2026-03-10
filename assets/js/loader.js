@@ -19,6 +19,16 @@ const bootLines = [
   { text: '<span class="ok">  ██ SYSTEM READY — Welcome, Analyst. ██</span>', delay: 3000 },
 ];
 
+// ===== SAFE sessionStorage WRAPPER =====
+// FIX: sessionStorage access can throw in private/restricted browsing modes,
+// crashing the entire DOMContentLoaded handler and leaving site-wrapper invisible.
+function safeSessionGet(key) {
+  try { return sessionStorage.getItem(key); } catch (e) { return null; }
+}
+function safeSessionSet(key, value) {
+  try { sessionStorage.setItem(key, value); } catch (e) { /* ignore */ }
+}
+
 function runBootSequence() {
   const screen = document.getElementById('boot-screen');
   if (!screen) return;
@@ -203,33 +213,44 @@ function startClock() {
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
-  // Check if already booted (on sub-pages, skip boot)
-  const isHome = window.location.pathname.endsWith('index.html') ||
-                 window.location.pathname.endsWith('/') ||
-                 window.location.pathname === '';
+  // FIX: Wrap entire init in try/catch so a JS error never leaves the page invisible.
+  try {
+    const isHome = window.location.pathname.endsWith('index.html') ||
+                   window.location.pathname.endsWith('/') ||
+                   window.location.pathname === '';
 
-  const bootScreen = document.getElementById('boot-screen');
-  const wrapper = document.getElementById('site-wrapper');
-  const alreadyBooted = sessionStorage.getItem('datanexus_booted');
+    const bootScreen = document.getElementById('boot-screen');
+    const wrapper = document.getElementById('site-wrapper');
 
-  if (bootScreen) {
-    if (isHome && !alreadyBooted) {
-      sessionStorage.setItem('datanexus_booted', 'true');
-      runBootSequence();
+    // FIX: Use safe wrappers — sessionStorage throws in some private/restricted contexts.
+    const alreadyBooted = safeSessionGet('datanexus_booted');
+
+    if (bootScreen) {
+      if (isHome && !alreadyBooted) {
+        safeSessionSet('datanexus_booted', 'true');
+        runBootSequence();
+      } else {
+        bootScreen.style.display = 'none';
+        if (wrapper) wrapper.classList.add('visible');
+        startMatrixRain();
+        initScrollAnimations();
+      }
     } else {
-      bootScreen.style.display = 'none';
+      // Sub-pages with no boot screen element: show immediately
       if (wrapper) wrapper.classList.add('visible');
       startMatrixRain();
       initScrollAnimations();
     }
-  } else {
-    // Sub-pages: no boot screen, show immediately
-    if (wrapper) wrapper.classList.add('visible');
-    startMatrixRain();
-    initScrollAnimations();
-  }
 
-  setActiveNav();
-  initMobileNav();
-  startClock();
+    setActiveNav();
+    initMobileNav();
+    startClock();
+
+  } catch (err) {
+    // FIX: Last-resort fallback — if anything above throws, force the page visible
+    // so users are never stuck on a black screen.
+    console.error('[DataNexus] Loader error:', err);
+    const wrapper = document.getElementById('site-wrapper');
+    if (wrapper) wrapper.classList.add('visible');
+  }
 });
