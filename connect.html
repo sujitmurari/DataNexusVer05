@@ -15,6 +15,8 @@
     #boot-screen{position:fixed;inset:0;background:#000;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column}
     #site-wrapper{opacity:0;transition:opacity 0.8s ease;position:relative;z-index:2}
     #site-wrapper.visible{opacity:1}
+    @keyframes force-visible { to { opacity:1; } }
+    #site-wrapper { animation: force-visible 0s 2s forwards; }
 
     /* ── Page header ── */
     .page-eyebrow {
@@ -63,13 +65,16 @@
       background: linear-gradient(90deg, rgba(53,224,255,0.35), transparent);
     }
 
-    /* ── Connect grid ── */
+    /* ── FIX: Force 2x2 grid — no orphan card ── */
     .connect-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
       gap: 1.25rem;
       position: relative;
       z-index: 1;
+    }
+    @media (max-width: 580px) {
+      .connect-grid { grid-template-columns: 1fr; }
     }
 
     /* ── Connect node card ── */
@@ -94,7 +99,6 @@
       position: relative;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-    /* Ping ring */
     .connect-icon::before {
       content: '';
       position: absolute;
@@ -173,9 +177,7 @@
     .node-email .signal-dot { background: var(--cyan); }
 
     /* ── Network status card ── */
-    .network-status-card {
-      padding: 1.75rem;
-    }
+    .network-status-card { padding: 1.75rem; }
     .network-status-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -202,6 +204,8 @@
   </style>
 </head>
 <body>
+
+<div id="boot-screen" style="display:none;"></div>
 
 <div id="site-wrapper">
   <canvas id="matrix-canvas"></canvas>
@@ -244,7 +248,7 @@
       <div class="dn-divider-line"></div>
     </div>
 
-    <!-- Connection Nodes -->
+    <!-- Connection Nodes — clean 2x2 grid -->
     <div class="connect-grid">
 
       <!-- LinkedIn -->
@@ -298,8 +302,8 @@
         <div class="connect-signal"><span class="signal-dot"></span> REPOSITORIES ONLINE</div>
       </a>
 
-      <!-- Email -->
-      <a href="mailto:sujitmurari@email.com"
+      <!-- Email — FIXED address -->
+      <a href="mailto:sujitmurari06@gmail.com"
          class="glow-card bracket-card connect-node node-email fade-in stagger-4">
         <div class="connect-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
@@ -308,7 +312,7 @@
           </svg>
         </div>
         <div class="connect-platform">Direct Email</div>
-        <div class="connect-handle">sujitmurari@email.com</div>
+        <div class="connect-handle">sujitmurari06@gmail.com</div>
         <div class="connect-desc">Direct inquiries · Collaboration proposals · Internship opportunities</div>
         <div class="connect-signal"><span class="signal-dot"></span> INBOX ACTIVE</div>
       </a>
