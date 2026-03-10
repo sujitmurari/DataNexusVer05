@@ -40,6 +40,36 @@
     }
     @media (min-width: 860px) {
       .contact-layout { grid-template-columns: 1fr 380px; align-items: start; }
+      .contact-form-col { align-self: start; }
+    }
+
+    /* ── Terminal info block ── */
+    .terminal-block {
+      margin-top: 1.5rem;
+      padding: 1.25rem 1.5rem;
+      background: rgba(4,10,25,0.6);
+      border: 1px solid rgba(53,224,255,0.12);
+      border-radius: 0.75rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      line-height: 2;
+      color: var(--text-dim);
+    }
+    .terminal-block .t-line { display: flex; gap: 0.75rem; align-items: baseline; }
+    .terminal-block .t-key { color: var(--cyan); min-width: 120px; flex-shrink: 0; }
+    .terminal-block .t-val { color: var(--text-secondary); }
+    .terminal-block .t-divider {
+      height: 1px;
+      background: rgba(53,224,255,0.08);
+      margin: 0.6rem 0;
+    }
+    .terminal-block .t-header {
+      color: var(--green);
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(53,224,255,0.1);
     }
 
     /* ── Form card ── */
@@ -353,55 +383,72 @@
 
     <div class="contact-layout">
 
-      <!-- ── Left: Contact Form ── -->
-      <div class="glow-card form-card fade-in">
-        <div class="form-card-title">Send a Message</div>
-        <div class="form-card-desc">Fill in the fields below and your message will be routed directly.</div>
+      <!-- ── Left: Contact Form + Terminal Info ── -->
+      <div class="contact-form-col">
+        <div class="glow-card form-card fade-in">
+          <div class="form-card-title">Send a Message</div>
+          <div class="form-card-desc">Fill in the fields below and your message will be routed directly.</div>
 
-        <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" novalidate>
+          <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" novalidate>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="contactName">Name <span class="req">*</span></label>
-              <input class="form-input" type="text" id="contactName" name="name" placeholder="Your full name" required>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="contactName">Name <span class="req">*</span></label>
+                <input class="form-input" type="text" id="contactName" name="name" placeholder="Your full name" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="contactEmail">Email <span class="req">*</span></label>
+                <input class="form-input" type="email" id="contactEmail" name="email" placeholder="you@company.com" required>
+              </div>
             </div>
+
             <div class="form-group">
-              <label class="form-label" for="contactEmail">Email <span class="req">*</span></label>
-              <input class="form-input" type="email" id="contactEmail" name="email" placeholder="you@company.com" required>
+              <label class="form-label" for="contactSubject">Subject <span class="req">*</span></label>
+              <select class="form-select" id="contactSubject" name="subject" required>
+                <option value="" disabled selected>Select a subject...</option>
+                <option value="internship">Internship Opportunity</option>
+                <option value="collaboration">Project Collaboration</option>
+                <option value="freelance">Freelance Analytics Work</option>
+                <option value="feedback">Portfolio Feedback</option>
+                <option value="other">Other Inquiry</option>
+              </select>
             </div>
-          </div>
 
-          <div class="form-group">
-            <label class="form-label" for="contactSubject">Subject <span class="req">*</span></label>
-            <select class="form-select" id="contactSubject" name="subject" required>
-              <option value="" disabled selected>Select a subject...</option>
-              <option value="internship">Internship Opportunity</option>
-              <option value="collaboration">Project Collaboration</option>
-              <option value="freelance">Freelance Analytics Work</option>
-              <option value="feedback">Portfolio Feedback</option>
-              <option value="other">Other Inquiry</option>
-            </select>
-          </div>
+            <div class="form-group">
+              <label class="form-label" for="contactOrg">Organization / Institution</label>
+              <input class="form-input" type="text" id="contactOrg" name="organization" placeholder="Company or university (optional)">
+            </div>
 
-          <div class="form-group">
-            <label class="form-label" for="contactOrg">Organization / Institution</label>
-            <input class="form-input" type="text" id="contactOrg" name="organization" placeholder="Company or university (optional)">
-          </div>
+            <div class="form-group">
+              <label class="form-label" for="contactMessage">Message <span class="req">*</span></label>
+              <textarea class="form-textarea" id="contactMessage" name="message" placeholder="Describe your inquiry, opportunity, or feedback..." required></textarea>
+            </div>
 
-          <div class="form-group">
-            <label class="form-label" for="contactMessage">Message <span class="req">*</span></label>
-            <textarea class="form-textarea" id="contactMessage" name="message" placeholder="Describe your inquiry, opportunity, or feedback..." required></textarea>
-          </div>
+            <div class="form-submit-row">
+              <button type="submit" class="form-submit-btn">▸ Transmit Message</button>
+              <span class="form-submit-note">Response within 24 hrs · IST timezone</span>
+            </div>
 
-          <div class="form-submit-row">
-            <button type="submit" class="form-submit-btn">▸ Transmit Message</button>
-            <span class="form-submit-note">Response within 24 hrs · IST timezone</span>
-          </div>
+            <div class="form-status" id="form-status"></div>
 
-          <!-- FIX 3 applied here: class is 'form-status' to match what script.js sets -->
-          <div class="form-status" id="form-status"></div>
+          </form>
+        </div>
 
-        </form>
+        <!-- Terminal info block — fills the left column gap -->
+        <div class="terminal-block fade-in">
+          <div class="t-header">◈ TRANSMISSION LOG</div>
+          <div class="t-line"><span class="t-key">ANALYST</span><span class="t-val">Sujit Murari</span></div>
+          <div class="t-line"><span class="t-key">ROLE</span><span class="t-val">Data Analytics · BI · Visualization</span></div>
+          <div class="t-divider"></div>
+          <div class="t-line"><span class="t-key">TOOLS</span><span class="t-val">Tableau · Excel · SQL · Python</span></div>
+          <div class="t-line"><span class="t-key">FRAMEWORKS</span><span class="t-val">Pandas · Matplotlib · Seaborn</span></div>
+          <div class="t-line"><span class="t-key">DATABASES</span><span class="t-val">MySQL · PostgreSQL</span></div>
+          <div class="t-divider"></div>
+          <div class="t-line"><span class="t-key">TIMEZONE</span><span class="t-val">IST · UTC +5:30</span></div>
+          <div class="t-line"><span class="t-key">RESPONSE</span><span class="t-val">Within 24 hours</span></div>
+          <div class="t-line"><span class="t-key">STATUS</span><span class="t-val" style="color:var(--green);">● OPEN TO OPPORTUNITIES</span></div>
+        </div>
+
       </div>
 
       <!-- ── Right: Sidebar Info ── -->
